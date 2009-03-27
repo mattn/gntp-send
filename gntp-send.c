@@ -468,14 +468,14 @@ int main(int argc, char* argv[]) {
 		case 'p': password = optarg; break;
 		case '?': break;
 		default:
-			fprintf(stderr, "%s: [-s server:port] [-p password] title message [icon]", argv[0]);
-			goto leave;
+			argc = 0;
+			break;
 		}
 		optarg = NULL;
 	}
 
 	if ((argc - optind) != 2 && (argc - optind) != 3) {
-		fprintf(stderr, "%s: [-s server:port] [-p password] title message [icon]", argv[0]);
+		fprintf(stderr, "%s: [-sSERVER:PORT] [-pPASSWORD] title message [icon]", argv[0]);
 		exit(1);
 	}
 
