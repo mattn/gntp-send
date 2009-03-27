@@ -448,6 +448,8 @@ int main(int argc, char* argv[]) {
 	int c;
 	char* server = "127.0.0.1:23053";
 	char* password = NULL;
+	char* appname = "gntp-send";
+	char* notify = "gntp-send notify";
 	char* title = NULL;
 	char* message = NULL;
 	char* icon = NULL;
@@ -466,6 +468,8 @@ int main(int argc, char* argv[]) {
 		switch (optopt) {
 		case 's': server = optarg; break;
 		case 'p': password = optarg; break;
+		case 'a': appname = optarg; break;
+		case 'n': notify = optarg; break;
 		case '?': break;
 		default:
 			argc = 0;
@@ -475,7 +479,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	if ((argc - optind) != 2 && (argc - optind) != 3) {
-		fprintf(stderr, "%s: [-sSERVER:PORT] [-pPASSWORD] title message [icon]", argv[0]);
+		fprintf(stderr, "%s: [-a APPNAME] [-n NOTIFY] [-s SERVER:PORT] [-p PASSWORD] title message [icon]", argv[0]);
 		exit(1);
 	}
 
@@ -498,11 +502,11 @@ int main(int argc, char* argv[]) {
 	if (sock == -1) goto leave;
     
 	sendline(sock, "GNTP/1.0 REGISTER NONE", authheader);
-	sendline(sock, "Application-Name: gntp-send", NULL);
+	sendline(sock, "Application-Name: ", appname);
 	sendline(sock, "Notifications-Count: 1", NULL);
 	sendline(sock, "", NULL);
-	sendline(sock, "Notification-Name: gntp-send notify", NULL);
-	sendline(sock, "Notification-Display-Name: gntp-send notify", NULL);
+	sendline(sock, "Notification-Name: ", notify);
+	sendline(sock, "Notification-Display-Name: ", notify);
 	sendline(sock, "Notification-Enabled: True", NULL);
 	sendline(sock, "", NULL);
 	while (1) {
@@ -518,8 +522,8 @@ int main(int argc, char* argv[]) {
 	if (sock == -1) goto leave;
 
 	sendline(sock, "GNTP/1.0 NOTIFY NONE", authheader);
-	sendline(sock, "Application-Name: gntp-send", NULL);
-	sendline(sock, "Notification-Name: gntp-send notify", NULL);
+	sendline(sock, "Application-Name: ", appname);
+	sendline(sock, "Notification-Name: ", notify);
 	sendline(sock, "Notification-Title: ", title);
 	sendline(sock, "Notification-Text: ", message);
 	if (icon) sendline(sock, "Notification-Icon: ", icon);
