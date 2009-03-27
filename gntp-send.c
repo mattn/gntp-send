@@ -464,12 +464,12 @@ int main(int argc, char* argv[]) {
 #endif
 
 	opterr = 0;
-	while ((c = getopt(argc, argv, "s:p:") != -1)) {
+	while ((c = getopt(argc, argv, "a:n:s:p:") != -1)) {
 		switch (optopt) {
-		case 's': server = optarg; break;
-		case 'p': password = optarg; break;
 		case 'a': appname = optarg; break;
 		case 'n': notify = optarg; break;
+		case 's': server = optarg; break;
+		case 'p': password = optarg; break;
 		case '?': break;
 		default:
 			argc = 0;
