@@ -485,7 +485,7 @@ int main(int argc, char* argv[]) {
 
 	title = string_to_utf8_alloc(argv[optind]);
 	message = string_to_utf8_alloc(argv[optind + 1]);
-	if ((argc - optind) == 1) icon = string_to_utf8_alloc(argv[optind + 2]);
+	if ((argc - optind) == 3) icon = string_to_utf8_alloc(argv[optind + 2]);
 
 	if (password) {
 		srand(time(NULL));
@@ -513,6 +513,11 @@ int main(int argc, char* argv[]) {
 		char* line = recvline(sock);
 		int len = strlen(line);
 		/* fprintf(stderr, "%s\n", line); */
+		if (strncmp(line, "GNTP/1.0 -ERROR", 15) == 0) {
+			fprintf(stderr, "failed to register notification\n");
+			free(line);
+			goto leave;
+		}
 		free(line);
 		if (len == 0) break;
 	}
@@ -532,6 +537,11 @@ int main(int argc, char* argv[]) {
 		char* line = recvline(sock);
 		int len = strlen(line);
 		/* fprintf(stderr, "%s\n", line); */
+		if (strncmp(line, "GNTP/1.0 -ERROR", 15) == 0) {
+			fprintf(stderr, "failed to post notification\n");
+			free(line);
+			goto leave;
+		}
 		free(line);
 		if (len == 0) break;
 	}
