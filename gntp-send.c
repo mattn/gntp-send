@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+#include <unistd.h>
 #ifdef _WIN32
 #include <locale.h>
 #include <winsock2.h>
@@ -290,7 +292,6 @@ int create_socket(const char* server) {
 	int sock = -1;
 	struct sockaddr_in serv_addr;
 	struct hostent* host_ent;
-	char value = 1; 
 	char* host = strdup(server);
 	char* port = strchr(host, ':');
 
@@ -380,8 +381,6 @@ char* gen_password_hash_alloc(const char* password, const char* salt) {
 	md5_context md5ctx;
 	char md5tmp[20];
 	char* md5digest;
-	char* md5hexdigest;
-	int n;
 
 	memset(md5tmp, 0, sizeof(md5tmp));
 	md5_starts(&md5ctx);
@@ -402,7 +401,7 @@ int	optind = 1;
 int	optopt;
 char *optarg;
 
-int getopt(int argc, char** argv, char* opts) {
+int getopts(int argc, char** argv, char* opts) {
 	static int sp = 1;
 	register int c;
 	register char *cp;
@@ -464,7 +463,7 @@ int main(int argc, char* argv[]) {
 #endif
 
 	opterr = 0;
-	while ((c = getopt(argc, argv, "a:n:s:p:") != -1)) {
+	while ((c = getopts(argc, argv, "a:n:s:p:") != -1)) {
 		switch (optopt) {
 		case 'a': appname = optarg; break;
 		case 'n': notify = optarg; break;
@@ -552,7 +551,7 @@ leave:
 	if (title) free(title);
 	if (message) free(message);
 	if (icon) free(icon);
-	if (authheader) authheader;
+	if (authheader) free(authheader);
 
 #ifdef _WIN32
 	WSACleanup();
