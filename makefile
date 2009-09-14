@@ -1,8 +1,14 @@
-gntp-send : gntp-send.o
-	gcc gntp-send.o -o gntp-send
+bin/gntp-send : objs/gntp-send.o objs/md5.o objs/tcp.o
+	gcc $^ -o $@
 
-gntp-send.o : gntp-send.c
-	gcc -Wall -c gntp-send.c -o gntp-send.o
+objs/tcp.o : source/tcp.c
+	gcc -I headers -Wall -c $< -o $@
+
+objs/md5.o : source/md5.c
+	gcc -I headers -Wall -c $< -o $@
+
+objs/gntp-send.o : source/gntp-send.c
+	gcc -I headers -Wall -c $< -o $@
 
 clean : 
-	rm -f gntp-send gntp-send.o
+	rm -f bin/* objs/*
