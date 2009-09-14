@@ -45,7 +45,7 @@ char* gen_password_hash_alloc(const char* password, const char* salt) {
 	return md5digest;
 }
 
-int growl(char *server,char *appname,char *notify,char *title, char *message , char *icon , char *password )
+int growl(char *server,char *appname,char *notify,char *title, char *message , char *icon , char *password , char *url )
 {		
 	int sock = -1;
 	char* salt;
@@ -74,6 +74,10 @@ int growl(char *server,char *appname,char *notify,char *title, char *message , c
 	sendline(sock, "Notification-Name: ", notify);
 	sendline(sock, "Notification-Display-Name: ", notify);
 	sendline(sock, "Notification-Enabled: True", NULL);
+	if( url != NULL )
+	{
+		sendline(sock, "Notification-Callback-Target: ", url  );
+	}
 	sendline(sock, "", NULL);
 	while (1) {
 		char* line = recvline(sock);
