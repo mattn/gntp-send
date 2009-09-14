@@ -1,5 +1,8 @@
-bin/gntp-send : objs/gntp-send.o objs/md5.o objs/tcp.o
+bin/gntp-send : objs/gntp-send.o objs/md5.o objs/tcp.o objs/growl.o
 	gcc $^ -o $@
+
+objs/growl.o : source/growl.c
+	gcc -I headers -Wall -c $< -o $@
 
 objs/tcp.o : source/tcp.c
 	gcc -I headers -Wall -c $< -o $@
