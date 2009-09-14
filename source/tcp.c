@@ -34,7 +34,7 @@ void sendline(int sock, const char* str, const char* val) {
 }
 
 char* recvline(int sock) {
-	const static int growsize = 80;
+	const int growsize = 80;
 	char c = 0;
 	char* line = (char*) malloc(growsize);
 	int len = growsize, pos = 0;
