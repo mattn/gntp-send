@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
 	message = string_to_utf8_alloc(argv[optind + 1]);
 	if ((argc - optind) == 3) icon = string_to_utf8_alloc(argv[optind + 2]);
 
-	int rc = growl(server,appname,notify,title,message,icon,password);
+	int rc = growl(server,appname,notify,title,message,icon,password,NULL);
 
 	if (message) free(message);
 	if (icon) free(icon);
