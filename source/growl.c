@@ -74,10 +74,6 @@ int growl(char *server,char *appname,char *notify,char *title, char *message , c
 	sendline(sock, "Notification-Name: ", notify);
 	sendline(sock, "Notification-Display-Name: ", notify);
 	sendline(sock, "Notification-Enabled: True", NULL);
-	if( url != NULL )
-	{
-		sendline(sock, "Notification-Callback-Target: ", url  );
-	}
 	sendline(sock, "", NULL);
 	while (1) {
 		char* line = recvline(sock);
@@ -102,6 +98,8 @@ int growl(char *server,char *appname,char *notify,char *title, char *message , c
 	sendline(sock, "Notification-Title: ", title);
 	sendline(sock, "Notification-Text: ", message);
 	if (icon) sendline(sock, "Notification-Icon: ", icon);
+	if (url) sendline(sock, "Notification-Callback-Target: ", url  );
+
 	sendline(sock, "", NULL);
 	while (1) {
 		char* line = recvline(sock);
