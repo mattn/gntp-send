@@ -45,7 +45,8 @@ char* gen_password_hash_alloc(const char* password, const char* salt) {
 	return md5digest;
 }
 
-int growl(char *server,char *appname,char *notify,char *title, char *message , char *icon , char *password , char *url )
+int growl( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
+                                const char *const icon , const char *const password , const char *url )
 {		
 	int sock = -1;
 	char* salt;
