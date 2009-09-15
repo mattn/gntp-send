@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #ifdef _WIN32
 #include <locale.h>
@@ -15,25 +16,27 @@
 
 #include "tcp.h"
 
-void sendline(int sock, const char* str, const char* val) {
-	int len = strlen(str);
-	char* line;
-	if (val) {
-		len += strlen(val);
-		line = (char*) malloc(len + 3);
-		strcpy(line, str);
-		strcat(line, val);
-		strcat(line, "\r\n");
-	} else {
-		line = (char*) malloc(len + 3);
-		strcpy(line, str);
-		strcat(line, "\r\n");
-	}
-	send(sock, line, len + 2, 0);
-	free(line);
+
+void growl_tcp_write( int sock , const char *const format , ... ) 
+{
+	va_list ap;
+
+	va_start( ap , format );
+	int length = vsnprintf( NULL , 0 , format , ap );
+	va_end(ap);
+
+	va_start(ap,format);
+	char *output = malloc(length+1);
+	sprintf( output , format , ap );
+	va_end(ap);
+
+	send( sock , output , length , 0 );
+	send( sock , "\r\n" , 2 , 0 );
+
+	free(output);
 }
 
-char* recvline(int sock) {
+char *growl_tcp_read(int sock) {
 	const int growsize = 80;
 	char c = 0;
 	char* line = (char*) malloc(growsize);
@@ -52,7 +55,7 @@ char* recvline(int sock) {
 	return line;
 }
 
-int create_socket(const char* server) {
+int growl_tcp_open(const char* server) {
 	int sock = -1;
 	struct sockaddr_in serv_addr;
 	struct hostent* host_ent;
@@ -88,7 +91,7 @@ leave:
 	return sock;
 }
 
-void close_socket(int sock) {
+void growl_tcp_close(int sock) {
 #ifdef _WIN32
 	if (sock < 0) closesocket(sock);
 #else

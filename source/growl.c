@@ -65,19 +65,19 @@ int growl( const char *const server,const char *const appname,const char *const 
 		free(salthash);
 	}
 
-	sock = create_socket(server);
+	sock = growl_tcp_open(server);
 	if (sock == -1) goto leave;
     
-	sendline(sock, "GNTP/1.0 REGISTER NONE", authheader);
-	sendline(sock, "Application-Name: ", appname);
-	sendline(sock, "Notifications-Count: 1", NULL);
-	sendline(sock, "", NULL);
-	sendline(sock, "Notification-Name: ", notify);
-	sendline(sock, "Notification-Display-Name: ", notify);
-	sendline(sock, "Notification-Enabled: True", NULL);
-	sendline(sock, "", NULL);
+	growl_tcp_write(sock, "GNTP/1.0 REGISTER NONE %s", authheader);
+	growl_tcp_write(sock, "Application-Name: %s ", appname);
+	growl_tcp_write(sock, "Notifications-Count: 1" );
+	growl_tcp_write(sock, "" );
+	growl_tcp_write(sock, "Notification-Name: %s", notify);
+	growl_tcp_write(sock, "Notification-Display-Name: %s", notify);
+	growl_tcp_write(sock, "Notification-Enabled: True" );
+	growl_tcp_write(sock, "" );
 	while (1) {
-		char* line = recvline(sock);
+		char* line = growl_tcp_read(sock);
 		int len = strlen(line);
 		/* fprintf(stderr, "%s\n", line); */
 		if (strncmp(line, "GNTP/1.0 -ERROR", 15) == 0) {
@@ -88,22 +88,22 @@ int growl( const char *const server,const char *const appname,const char *const 
 		free(line);
 		if (len == 0) break;
 	}
-	close_socket(sock);
+	growl_tcp_close(sock);
 
-	sock = create_socket(server);
+	sock = growl_tcp_open(server);
 	if (sock == -1) goto leave;
 
-	sendline(sock, "GNTP/1.0 NOTIFY NONE", authheader);
-	sendline(sock, "Application-Name: ", appname);
-	sendline(sock, "Notification-Name: ", notify);
-	sendline(sock, "Notification-Title: ", title);
-	sendline(sock, "Notification-Text: ", message);
-	if (icon) sendline(sock, "Notification-Icon: ", icon);
-	if (url) sendline(sock, "Notification-Callback-Target: ", url  );
+	growl_tcp_write(sock, "GNTP/1.0 NOTIFY NONE %s", authheader);
+	growl_tcp_write(sock, "Application-Name: %s", appname);
+	growl_tcp_write(sock, "Notification-Name: %s", notify);
+	growl_tcp_write(sock, "Notification-Title: %s", title);
+	growl_tcp_write(sock, "Notification-Text: %s", message);
+	if (icon) growl_tcp_write(sock, "Notification-Icon: %s", icon);
+	if (url) growl_tcp_write(sock, "Notification-Callback-Target: %s", url  );
 
-	sendline(sock, "", NULL);
+	growl_tcp_write(sock, "");
 	while (1) {
-		char* line = recvline(sock);
+		char* line = growl_tcp_read(sock);
 		int len = strlen(line);
 		/* fprintf(stderr, "%s\n", line); */
 		if (strncmp(line, "GNTP/1.0 -ERROR", 15) == 0) {
@@ -114,7 +114,7 @@ int growl( const char *const server,const char *const appname,const char *const 
 		free(line);
 		if (len == 0) break;
 	}
-	close_socket(sock);
+	growl_tcp_close(sock);
 	sock = 0;
 
 leave:
