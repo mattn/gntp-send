@@ -3,7 +3,7 @@ all: dirs bin/gntp-send
 bin/gntp-send : objs/gntp-send.o lib/libgrowl.a
 	gcc $^ -o $@
 
-lib/libgrowl.a  : objs/growl.o objs/tcp.o  objs/md5.o
+lib/libgrowl.a : objs/growl.o objs/tcp.o  objs/md5.o
 	ar rc $@ $^
 	ranlib $@	
 

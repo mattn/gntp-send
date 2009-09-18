@@ -1,9 +1,9 @@
 all: dirs bin/gntp-send.exe
 
-bin/gntp-send.exe : objs/gntp-send.o lib/libgrowl.a
+bin/gntp-send.exe : objs/gntp-send.o lib/libgrowl-static.a
 	gcc $^ -o $@ -lws2_32
 
-lib/libgrowl.a  : objs/growl.o objs/tcp.o  objs/md5.o
+lib/libgrowl-static.a : objs/growl.o objs/tcp.o  objs/md5.o
 	ar rc $@ $^
 	ranlib $@	
 
@@ -18,6 +18,13 @@ objs/md5.o : source/md5.c
 
 objs/gntp-send.o : source/gntp-send.c
 	gcc -I headers -Wall -c $< -o $@
+
+shared : lib/growl.dll lib/libgrowl.a
+lib/growl.dll : objs/growl.o objs/tcp.o  objs/md5.o
+	gcc -Wl,-enable-stdcall-fixup -shared $^ -o $@ -lws2_32
+
+lib/libgrowl.a : lib/growl.dll source/growl.def
+	dlltool --def source/growl.def --dllname lib/growl.dll --output-lib $@
 
 clean : 
 	rm -f bin/* objs/* lib/*
