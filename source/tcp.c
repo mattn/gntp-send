@@ -4,9 +4,7 @@
 #include <stdarg.h>
 
 #ifdef _WIN32
-#include <locale.h>
 #include <winsock2.h>
-#pragma comment (lib, "ws2_32.lib")
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -16,22 +14,20 @@
 
 #include "tcp.h"
 
-
-void growl_tcp_write( int sock , const char *const format , ... ) 
-{
+void growl_tcp_write(int sock, const char *const format, ...) {
 	va_list ap;
+	int length = 0;
+	char *output;
 
-	va_start( ap , format );
-	int length = vsnprintf( NULL , 0 , format , ap );
-	va_end(ap);
+	va_start(ap, format);
 
-	va_start(ap,format);
-	char *output = malloc(length+1);
-	sprintf( output , format , ap );
-	va_end(ap);
+	length = vsnprintf(NULL, 0, format, ap);
+	output = malloc(length+1);
 
-	send( sock , output , length , 0 );
-	send( sock , "\r\n" , 2 , 0 );
+	vsprintf(output, format , ap);
+
+	send(sock , output , length , 0);
+	send(sock , "\r\n" , 2 , 0);
 
 	free(output);
 }

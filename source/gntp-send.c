@@ -1,3 +1,6 @@
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -87,10 +90,11 @@ int main(int argc, char* argv[]) {
 	char* title = NULL;
 	char* message = NULL;
 	char* icon = NULL;
+	char* url = NULL;
+	int rc;
 #ifdef _WIN32
 	WSADATA wsaData;
-	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) goto leave;
-	setlocale(LC_CTYPE, "");
+	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) return -1;
 #endif
 
 	opterr = 0;
@@ -108,19 +112,22 @@ int main(int argc, char* argv[]) {
 		optarg = NULL;
 	}
 
-	if ((argc - optind) != 2 && (argc - optind) != 3) {
-		fprintf(stderr, "%s: [-a APPNAME] [-n NOTIFY] [-s SERVER:PORT] [-p PASSWORD] title message [icon]\n", argv[0]);
+	if ((argc - optind) < 2 || (argc - optind) > 4) {
+		fprintf(stderr, "%s: [-a APPNAME] [-n NOTIFY] [-s SERVER:PORT] [-p PASSWORD] title message [icon] [url]\n", argv[0]);
 		exit(1);
 	}
 
 	title = string_to_utf8_alloc(argv[optind]);
 	message = string_to_utf8_alloc(argv[optind + 1]);
-	if ((argc - optind) == 3) icon = string_to_utf8_alloc(argv[optind + 2]);
+	if ((argc - optind) >= 3) icon = string_to_utf8_alloc(argv[optind + 2]);
+	if ((argc - optind) == 4) url = string_to_utf8_alloc(argv[optind + 3]);
 
-	int rc = growl(server,appname,notify,title,message,icon,password,NULL);
+	rc = growl(server,appname,notify,title,message,icon,password,url);
 
+	if (title) free(title);
 	if (message) free(message);
 	if (icon) free(icon);
+	if (url) free(url);
 
 #ifdef _WIN32
 	WSACleanup();

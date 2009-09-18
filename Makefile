@@ -1,3 +1,5 @@
+all: dirs bin/gntp-send
+
 bin/gntp-send : objs/gntp-send.o lib/libgrowl.a
 	gcc $^ -o $@
 
@@ -19,3 +21,9 @@ objs/gntp-send.o : source/gntp-send.c
 
 clean : 
 	rm -f bin/* objs/* lib/*
+
+dirs : bin objs lib
+bin :
+objs :
+lib :
+	mkdir $@

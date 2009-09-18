@@ -1,0 +1,29 @@
+all: dirs bin/gntp-send.exe
+
+bin/gntp-send.exe : objs/gntp-send.o lib/libgrowl.a
+	gcc $^ -o $@ -lws2_32
+
+lib/libgrowl.a  : objs/growl.o objs/tcp.o  objs/md5.o
+	ar rc $@ $^
+	ranlib $@	
+
+objs/growl.o : source/growl.c
+	gcc -I headers -Wall -Wno-format-zero-length -c $< -o $@
+
+objs/tcp.o : source/tcp.c
+	gcc -I headers -Wall -c $< -o $@
+
+objs/md5.o : source/md5.c
+	gcc -I headers -Wall -c $< -o $@
+
+objs/gntp-send.o : source/gntp-send.c
+	gcc -I headers -Wall -c $< -o $@
+
+clean : 
+	rm -f bin/* objs/* lib/*
+
+dirs : bin objs lib
+bin :
+objs :
+lib :
+	mkdir $@
