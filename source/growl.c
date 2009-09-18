@@ -1,3 +1,9 @@
+#ifdef _WIN32
+#include <windows.h>
+#define EXPORT __declspec(dllexport)
+#else
+#define EXPORT
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -47,6 +53,7 @@ char* gen_password_hash_alloc(const char* password, const char* salt) {
 	return md5digest;
 }
 
+EXPORT
 int growl(const char *const server, const char *const appname,
 		const char *const notify, const char *const title,
 		const char *const message, const char *const icon,
@@ -125,3 +132,33 @@ leave:
 
 	return (sock == 0) ? 0 : -1;
 }
+
+#ifdef _WIN32
+EXPORT
+void GrowlNotify(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow) {
+	char* server = "127.0.0.1:23053";
+	char* password = NULL;
+	char* appname = "gntp-send";
+	char* notify = "gntp-send notify";
+	char* title = NULL;
+	char* message = NULL;
+	char* icon = NULL;
+	char* url = NULL;
+	char* first = strdup(lpszCmdLine);
+	char* ptr = first;
+	int rc;
+	WSADATA wsaData;
+	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) return;
+	#define SKIP(x)	while (*x && *x != ' ') x++; if (*x == ' ') *x++ = 0;
+	server = ptr;  SKIP(ptr);
+	appname = ptr; SKIP(ptr);
+	notify = ptr;  SKIP(ptr);
+	title = ptr;   SKIP(ptr);
+	message = ptr; SKIP(ptr);
+	icon = ptr;    SKIP(ptr);
+	url = ptr;     SKIP(ptr);
+	rc = growl(server,appname,notify,title,message,icon,password,url);
+	WSACleanup();
+	free(ptr);
+}
+#endif
