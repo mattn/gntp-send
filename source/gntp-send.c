@@ -12,26 +12,26 @@
 
 static char* string_to_utf8_alloc(const char* str) {
 #ifdef _WIN32
-        unsigned int codepage;
-        size_t in_len = strlen(str);
-        wchar_t* wcsdata;
-        char* mbsdata;
-        size_t mbssize, wcssize;
+	unsigned int codepage;
+	size_t in_len = strlen(str);
+	wchar_t* wcsdata;
+	char* mbsdata;
+	size_t mbssize, wcssize;
 
-        codepage = GetACP();
-        wcssize = MultiByteToWideChar(codepage, 0, str, in_len,  NULL, 0);
-        wcsdata = (wchar_t*) malloc((wcssize + 1) * sizeof(wchar_t));
-        wcssize = MultiByteToWideChar(codepage, 0, str, in_len, wcsdata, wcssize + 1);
-        wcsdata[wcssize] = 0;
+	codepage = GetACP();
+	wcssize = MultiByteToWideChar(codepage, 0, str, in_len,  NULL, 0);
+	wcsdata = (wchar_t*) malloc((wcssize + 1) * sizeof(wchar_t));
+	wcssize = MultiByteToWideChar(codepage, 0, str, in_len, wcsdata, wcssize + 1);
+	wcsdata[wcssize] = 0;
 
-        mbssize = WideCharToMultiByte(CP_UTF8, 0, (LPCWSTR) wcsdata, -1, NULL, 0, NULL, NULL);
-        mbsdata = (char*) malloc((mbssize + 1));
-        mbssize = WideCharToMultiByte(CP_UTF8, 0, (LPCWSTR) wcsdata, -1, mbsdata, mbssize, NULL, NULL);
-        mbsdata[mbssize] = 0;
-        free(wcsdata);
-        return mbsdata;
+	mbssize = WideCharToMultiByte(CP_UTF8, 0, (LPCWSTR) wcsdata, -1, NULL, 0, NULL, NULL);
+	mbsdata = (char*) malloc((mbssize + 1));
+	mbssize = WideCharToMultiByte(CP_UTF8, 0, (LPCWSTR) wcsdata, -1, mbsdata, mbssize, NULL, NULL);
+	mbsdata[mbssize] = 0;
+	free(wcsdata);
+	return mbsdata;
 #else
-        return strdup(str);
+	return strdup(str);
 #endif
 }
 

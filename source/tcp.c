@@ -24,10 +24,10 @@ void growl_tcp_write(int sock, const char *const format, ...) {
 	length = vsnprintf(NULL, 0, format, ap);
 	output = malloc(length+1);
 
-	vsprintf(output, format , ap);
+	vsprintf(output, format, ap);
 
-	send(sock , output , length , 0);
-	send(sock , "\r\n" , 2 , 0);
+	send(sock, output, length, 0);
+	send(sock, "\r\n", 2, 0);
 
 	free(output);
 }
