@@ -24,6 +24,8 @@ clean :
 
 dirs : bin objs lib
 bin :
+	mkdir $@
 objs :
+	mkdir $@
 lib :
 	mkdir $@
