@@ -23,7 +23,7 @@ lib/growl.dll : objs/growl.obj objs/tcp.obj  objs/md5.obj
 	link -dll /out:$@ /def:source/growl.def $** ws2_32.lib
 
 clean : 
-	rm -f bin/* objs/* lib/*
+	del /Q bin objs lib
 
 dirs : bin objs lib
 bin :
