@@ -91,7 +91,6 @@ int main(int argc, char* argv[]) {
 	char* message = NULL;
 	char* icon = NULL;
 	char* url = NULL;
-	int rc;
 #ifdef _WIN32
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) return -1;
@@ -122,7 +121,7 @@ int main(int argc, char* argv[]) {
 	if ((argc - optind) >= 3) icon = string_to_utf8_alloc(argv[optind + 2]);
 	if ((argc - optind) == 4) url = string_to_utf8_alloc(argv[optind + 3]);
 
-	rc = growl(server,appname,notify,title,message,icon,password,url);
+	int rc = growl(server,appname,notify,title,message,icon,password,NULL);
 
 	if (title) free(title);
 	if (message) free(message);

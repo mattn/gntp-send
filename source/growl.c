@@ -12,8 +12,6 @@
 #include "md5.h"
 #include "tcp.h"
 
-#define __str__(x) (x ? x : "")
-
 static const char hex_table[] = "0123456789ABCDEF";
 static char* string_to_hex_alloc(const char* str, int len) {
 	int n, l;
@@ -54,10 +52,9 @@ char* gen_password_hash_alloc(const char* password, const char* salt) {
 }
 
 EXPORT
-int growl(const char *const server, const char *const appname,
-		const char *const notify, const char *const title,
-		const char *const message, const char *const icon,
-		const char *const password, const char *url) {		
+int growl( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
+                                const char *const icon , const char *const password , const char *url )
+{		
 	int sock = -1;
 	char* salt;
         char* salthash;
@@ -78,12 +75,12 @@ int growl(const char *const server, const char *const appname,
 	sock = growl_tcp_open(server);
 	if (sock == -1) goto leave;
     
-	growl_tcp_write(sock, "GNTP/1.0 REGISTER NONE %s", __str__(authheader));
-	growl_tcp_write(sock, "Application-Name: %s ", __str__(appname));
-	growl_tcp_write(sock, "Notifications-Count: 1");
+	growl_tcp_write(sock, "GNTP/1.0 REGISTER NONE %s", authheader);
+	growl_tcp_write(sock, "Application-Name: %s ", appname);
+	growl_tcp_write(sock, "Notifications-Count: 1" );
 	growl_tcp_write(sock, "" );
-	growl_tcp_write(sock, "Notification-Name: %s", __str__(notify));
-	growl_tcp_write(sock, "Notification-Display-Name: %s", __str__(notify));
+	growl_tcp_write(sock, "Notification-Name: %s", notify);
+	growl_tcp_write(sock, "Notification-Display-Name: %s", notify);
 	growl_tcp_write(sock, "Notification-Enabled: True" );
 	growl_tcp_write(sock, "" );
 	while (1) {
@@ -103,13 +100,13 @@ int growl(const char *const server, const char *const appname,
 	sock = growl_tcp_open(server);
 	if (sock == -1) goto leave;
 
-	growl_tcp_write(sock, "GNTP/1.0 NOTIFY NONE %s", __str__(authheader));
-	growl_tcp_write(sock, "Application-Name: %s", __str__(appname));
-	growl_tcp_write(sock, "Notification-Name: %s", __str__(notify));
-	growl_tcp_write(sock, "Notification-Title: %s", __str__(title));
-	growl_tcp_write(sock, "Notification-Text: %s", __str__(message));
-	if (icon) growl_tcp_write(sock, "Notification-Icon: %s", __str__(icon));
-	if (url) growl_tcp_write(sock, "Notification-Callback-Target: %s", __str__(url));
+	growl_tcp_write(sock, "GNTP/1.0 NOTIFY NONE %s", authheader);
+	growl_tcp_write(sock, "Application-Name: %s", appname);
+	growl_tcp_write(sock, "Notification-Name: %s", notify);
+	growl_tcp_write(sock, "Notification-Title: %s", title);
+	growl_tcp_write(sock, "Notification-Text: %s", message);
+	if (icon) growl_tcp_write(sock, "Notification-Icon: %s", icon);
+	if (url) growl_tcp_write(sock, "Notification-Callback-Target: %s", url  );
 
 	growl_tcp_write(sock, "");
 	while (1) {
