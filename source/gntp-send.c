@@ -83,6 +83,7 @@ int getopts(int argc, char** argv, char* opts) {
 
 int main(int argc, char* argv[]) {
 	int c;
+	int rc;
 	char* server = "127.0.0.1:23053";
 	char* password = NULL;
 	char* appname = "gntp-send";
@@ -121,7 +122,7 @@ int main(int argc, char* argv[]) {
 	if ((argc - optind) >= 3) icon = string_to_utf8_alloc(argv[optind + 2]);
 	if ((argc - optind) == 4) url = string_to_utf8_alloc(argv[optind + 3]);
 
-	int rc = growl(server,appname,notify,title,message,icon,password,NULL);
+	rc = growl(server,appname,notify,title,message,icon,password,NULL);
 
 	if (title) free(title);
 	if (message) free(message);
