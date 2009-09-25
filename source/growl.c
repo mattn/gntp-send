@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <arpa/inet.h>
 
 #include "md5.h"
 #include "tcp.h"
@@ -129,6 +130,37 @@ leave:
 
 	return (sock == 0) ? 0 : -1;
 }
+
+int growl_udp( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
+                                const char *const icon , const char *const password , const char *url )
+{
+	char data[1024];
+	memset( data , 0 , 1024 );
+
+	data[0] = htons(1);			// protocol version 1 (md5);
+	data[1] = htons(0);			// type 0 (registration)
+	data[2] = htons(0);			// length of app name
+	data[3] = htons(strlen(appname));
+	data[4] = htons(1);			// number of notifications
+	data[5] = htons(1);			// number of notifications enabled by default
+	sprintf( data + 6 , "%s" , appname );	// application name
+
+	
+	int pointer = 6 + strlen(appname);
+
+
+	data[pointer] = htons(0);		// notification name length;
+	pointer++;
+	data[pointer] = htons(strlen(notify));
+	pointer++;
+	sprintf( data + pointer , "%s" , notify );
+
+	data[pointer] = htons(1);
+
+	
+	return growl_tcp_datagram( server , data , pointer );
+}
+
 
 #ifdef _WIN32
 EXPORT
