@@ -8,5 +8,6 @@ void growl_tcp_write( int sock , const char *const format , ... ) __attribute__ 
 char* growl_tcp_read(int sock);
 int growl_tcp_open(const char* server);
 void growl_tcp_close(int sock);
+int growl_tcp_datagram( const char *server , const char *data , const int data_length );
 
 #endif /* _TCP_H_ */
