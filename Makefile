@@ -8,7 +8,7 @@ lib/libgrowl.a : objs/growl.o objs/tcp.o  objs/md5.o
 	ranlib $@	
 
 objs/growl.o : source/growl.c
-	gcc -I headers -Wall -Wno-format-zero-length -c $< -o $@
+	gcc -I headers -Wall -Wno-pointer-sign -Wno-format-zero-length -c $< -o $@
 
 objs/tcp.o : source/tcp.c
 	gcc -I headers -Wall -c $< -o $@
