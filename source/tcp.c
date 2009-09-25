@@ -17,14 +17,17 @@
 
 void growl_tcp_write( int sock , const char *const format , ... ) 
 {
+	int length;
+	char *output;
+
 	va_list ap;
 
 	va_start( ap , format );
-	int length = vsnprintf( NULL , 0 , format , ap );
+	length = vsnprintf( NULL , 0 , format , ap );
 	va_end(ap);
 
 	va_start(ap,format);
-	char *output = malloc(length+1);
+	output = malloc(length+1);
 	vsnprintf( output , length+1 , format , ap );
 	va_end(ap);
 
