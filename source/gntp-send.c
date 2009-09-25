@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
 	if ((argc - optind) >= 3) icon = string_to_utf8_alloc(argv[optind + 2]);
 	if ((argc - optind) == 4) url = string_to_utf8_alloc(argv[optind + 3]);
 
-	rc = growl(server,appname,notify,title,message,icon,password,NULL);
+	rc = growl_udp(server,appname,notify,title,message,icon,password,NULL);
 
 	if (title) free(title);
 	if (message) free(message);

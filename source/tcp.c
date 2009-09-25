@@ -91,6 +91,7 @@ int growl_tcp_parse_hostname( const char *const server , int default_port , stru
 {
 	char *hostname = strdup(server);
 	char *port = strchr( server, ':' );
+	struct hostent* host_ent;
 	if( port != NULL )
 	{
 		*port = '\0';
@@ -98,7 +99,7 @@ int growl_tcp_parse_hostname( const char *const server , int default_port , stru
 		default_port = atoi(port);
 	}
 	
-	struct hostent* host_ent = gethostbyname(hostname);
+	host_ent = gethostbyname(hostname);
 	if( host_ent == NULL )
 	{
 		perror("gethostbyname");
@@ -115,16 +116,17 @@ int growl_tcp_parse_hostname( const char *const server , int default_port , stru
 	return 0;
 }
 
-int growl_tcp_datagram( const char *server , const char *data , const int data_length )
+int growl_tcp_datagram( const char *server , const unsigned char *data , const int data_length )
 {
 	struct sockaddr_in serv_addr;
-	
+	int sock = 0;
+
 	if( growl_tcp_parse_hostname( server , 9887 , &serv_addr ) == -1 )
 	{
 		return -1;
 	}
 	
-	int sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if( sock < 0 )
 	{
 		return -1;

@@ -15,8 +15,8 @@ void md5_starts(md5_context *ctx) {
 	ctx->state[3] = 0x10325476;
 }
 
-void md5_process(md5_context *ctx, const uint8 data[64]) {
-	uint32 X[16], A, B, C, D;
+void md5_process(md5_context *ctx, const uint8_t data[64]) {
+	uint32_t X[16], A, B, C, D;
 
 	GET_UINT32(X[0],  data,  0);
 	GET_UINT32(X[1],  data,  4);
@@ -137,8 +137,8 @@ void md5_process(md5_context *ctx, const uint8 data[64]) {
 	ctx->state[3] += D;
 }
 
-void md5_update(md5_context *ctx, const uint8 *input, uint32 length) {
-	uint32 left, fill;
+void md5_update(md5_context *ctx, const uint8_t *input, uint32_t length) {
+	uint32_t left, fill;
 
 	if (!length)
 		return;
@@ -171,17 +171,17 @@ void md5_update(md5_context *ctx, const uint8 *input, uint32 length) {
 	}
 }
 
-const uint8 md5_padding[64] = {
+const uint8_t md5_padding[64] = {
 	0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-void md5_finish(md5_context *ctx, uint8 digest[16]) {
-	uint32 last, padn;
-	uint32 high, low;
-	uint8 msglen[8];
+void md5_finish(md5_context *ctx, uint8_t digest[16]) {
+	uint32_t last, padn;
+	uint32_t high, low;
+	uint8_t msglen[8];
 
 	high = (ctx->total[0] >> 29) | (ctx->total[1] << 3);
 	low  = (ctx->total[0] <<  3);
