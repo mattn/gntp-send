@@ -113,7 +113,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	if ((argc - optind) < 2 || (argc - optind) > 4) {
-		fprintf(stderr, "%s: [-a APPNAME] [-n NOTIFY] [-s SERVER:PORT] [-p PASSWORD] title message [icon] [url]\n", argv[0]);
+		fprintf(stderr, "%s: [-u] [-a APPNAME] [-n NOTIFY] [-s SERVER:PORT] [-p PASSWORD] title message [icon] [url]\n", argv[0]);
 		exit(1);
 	}
 
