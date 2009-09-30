@@ -246,13 +246,13 @@ int growl_udp_notify(
 	pointer += 2;
 	memcpy(data + pointer, &appname_length, 2);	
 	pointer += 2;
-	sprintf((char*)data + pointer, notify);
+	strcpy(data + pointer, notify);
 	pointer += strlen(notify);
-	sprintf((char*)data + pointer, title);
+	strcpy(data + pointer, title);
 	pointer += strlen(title);
-	sprintf((char*)data + pointer, message);
+	strcpy(data + pointer, message);
 	pointer += strlen(message);
-	sprintf((char*)data + pointer, appname);
+	strcpy(data + pointer, appname);
 	pointer += strlen(appname);
 
 
