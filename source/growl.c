@@ -66,9 +66,9 @@ int growl(
 		const char *url) {		
 	int sock = -1;
 	char* salt;
-        char* salthash;
-        char* keyhash;
-		char* authheader = NULL;
+	char* salthash;
+	char* keyhash;
+	char* authheader = NULL;
 
 	if (password) {
 		srand(time(NULL));
@@ -199,7 +199,7 @@ int growl_udp_register(
 	pointer++;
 
 
-	growl_append_md5(data, pointer, password);
+	growl_append_md5(data, pointer, password ? password : "");
 	pointer += 16;
 
 	rc = growl_tcp_datagram(server, data, pointer);
@@ -256,7 +256,7 @@ int growl_udp_notify(
 	pointer += strlen(appname);
 
 
-	growl_append_md5(data, pointer, password);
+	growl_append_md5(data, pointer, password ? password : "");
 	pointer += 16;
 
 
@@ -276,7 +276,7 @@ int growl_udp(
 		const char *const password,
 		const char *url) {
 	int rc = growl_udp_register(server, appname, notify, password);
-	printf("rc = %d\n", rc);
+	//printf("rc = %d\n", rc);
 	if(rc == 0) {
 		rc = growl_udp_notify(server, appname, notify, title, message, password);
 	}

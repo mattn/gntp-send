@@ -92,22 +92,22 @@ int main(int argc, char* argv[]) {
 	char* message = NULL;
 	char* icon = NULL;
 	char* url = NULL;
+	int tcpsend = 1;
 #ifdef _WIN32
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) return -1;
 #endif
 
 	opterr = 0;
-	while ((c = getopts(argc, argv, "a:n:s:p:") != -1)) {
+	while ((c = getopts(argc, argv, "a:n:s:p:u") != -1)) {
 		switch (optopt) {
 		case 'a': appname = optarg; break;
 		case 'n': notify = optarg; break;
 		case 's': server = optarg; break;
 		case 'p': password = optarg; break;
+		case 'u': tcpsend = 0; break;
 		case '?': break;
-		default:
-			argc = 0;
-			break;
+		default: argc = 0; break;
 		}
 		optarg = NULL;
 	}
@@ -122,7 +122,10 @@ int main(int argc, char* argv[]) {
 	if ((argc - optind) >= 3) icon = string_to_utf8_alloc(argv[optind + 2]);
 	if ((argc - optind) == 4) url = string_to_utf8_alloc(argv[optind + 3]);
 
-	rc = growl(server,appname,notify,title,message,icon,password,url);
+	if (tcpsend)
+		rc = growl(server,appname,notify,title,message,icon,password,url);
+	else
+		rc = growl_udp(server,appname,notify,title,message,icon,password,url);
 
 	if (title) free(title);
 	if (message) free(message);
