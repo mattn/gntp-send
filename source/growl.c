@@ -176,12 +176,12 @@ int growl_udp_register( const char *const server , const char *const appname , c
 	pointer++;
 	memcpy( data + pointer, &default_notifications_count , 1 );	
 	pointer++;
-	sprintf( data + pointer , "%s" , appname );
+	sprintf( (char*)data + pointer , "%s" , appname );
 	pointer += strlen(appname);
 
 	memcpy( data + pointer, &notify_length , 2 );		
 	pointer +=2;
-	sprintf( data + pointer , "%s" , notify );
+	sprintf( (char*)data + pointer , "%s" , notify );
 	pointer += strlen(notify);
 	 
 	memcpy( data , &notifications_count , 1 );
@@ -232,13 +232,13 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
 	pointer += 2;
 	memcpy( data + pointer , &appname_length , 2 );	
 	pointer += 2;
-	sprintf( data + pointer , notify );
+	sprintf( (char*)data + pointer , notify );
 	pointer += strlen(notify);
-	sprintf( data + pointer , title );
+	sprintf( (char*)data + pointer , title );
 	pointer += strlen(title);
-	sprintf( data + pointer , message );
+	sprintf( (char*)data + pointer , message );
 	pointer += strlen(message);
-	sprintf( data + pointer , appname );
+	sprintf( (char*)data + pointer , appname );
 	pointer += strlen(appname);
 
 
