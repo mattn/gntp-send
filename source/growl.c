@@ -150,7 +150,7 @@ void growl_append_md5( unsigned char *const data , const int data_length , const
 int growl_udp_register( const char *const server , const char *const appname , const char *const notify , const char *const password  )
 {
 	int register_header_length = 26+strlen(appname)+strlen(notify);
-	unsigned char *data = malloc(register_header_length);
+	unsigned char *data = (unsigned char*)malloc(register_header_length);
 	int pointer = 0;
 	int rc = 0;
 
@@ -201,7 +201,7 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
                                 const char *const password )
 {
 	int notify_header_length = 28 + strlen(appname)+strlen(notify)+strlen(message)+strlen(title);
-	unsigned char *data = malloc(notify_header_length);
+	unsigned char *data = (unsigned char*)malloc(notify_header_length);
 	int pointer = 0;
 	int rc = 0;
 

@@ -28,7 +28,7 @@ void growl_tcp_write( int sock , const char *const format , ... )
 	va_end(ap);
 
 	va_start(ap,format);
-	output = malloc(length+1);
+	output = (char*)malloc(length+1);
 	vsnprintf( output , length+1 , format , ap );
 	va_end(ap);
 
