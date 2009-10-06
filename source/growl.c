@@ -78,7 +78,7 @@ int growl( const char *const server,const char *const appname,const char *const 
 	sock = growl_tcp_open(server);
 	if (sock == -1) goto leave;
     
-	growl_tcp_write(sock, "GNTP/1.0 REGISTER NONE %s", authheader);
+	growl_tcp_write(sock, "GNTP/1.0 REGISTER NONE %s", authheader ? authheader : "");
 	growl_tcp_write(sock, "Application-Name: %s ", appname);
 	growl_tcp_write(sock, "Notifications-Count: 1" );
 	growl_tcp_write(sock, "" );
@@ -103,7 +103,7 @@ int growl( const char *const server,const char *const appname,const char *const 
 	sock = growl_tcp_open(server);
 	if (sock == -1) goto leave;
 
-	growl_tcp_write(sock, "GNTP/1.0 NOTIFY NONE %s", authheader);
+	growl_tcp_write(sock, "GNTP/1.0 NOTIFY NONE %s", authheader ? authheader : "");
 	growl_tcp_write(sock, "Application-Name: %s", appname);
 	growl_tcp_write(sock, "Notification-Name: %s", notify);
 	growl_tcp_write(sock, "Notification-Title: %s", title);
