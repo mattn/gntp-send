@@ -90,7 +90,7 @@ void growl_tcp_close(int sock) {
 int growl_tcp_parse_hostname( const char *const server , int default_port , struct sockaddr_in *const sockaddr )
 {
 	char *hostname = strdup(server);
-	char *port = strchr( server, ':' );
+	char *port = strchr( hostname, ':' );
 	struct hostent* host_ent;
 	if( port != NULL )
 	{
@@ -132,7 +132,7 @@ int growl_tcp_datagram( const char *server , const unsigned char *data , const i
 		return -1;
 	}
 	
-	if( sendto(sock, data , data_length , 0 , (struct sockaddr*)&serv_addr , sizeof(serv_addr) ) > 0 )
+	if( sendto(sock, (char*)data , data_length , 0 , (struct sockaddr*)&serv_addr , sizeof(serv_addr) ) > 0 )
 	{
 		return 0;
 	}
