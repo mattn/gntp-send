@@ -122,11 +122,11 @@ int main(int argc, char* argv[]) {
 	if ((argc - optind) >= 3) icon = string_to_utf8_alloc(argv[optind + 2]);
 	if ((argc - optind) == 4) url = string_to_utf8_alloc(argv[optind + 3]);
 
+	if (!server) server = "127.0.0.1";
+	
 	if (tcpsend) {
-		if (!server) server = "127.0.0.1:23053";
 		rc = growl(server,appname,notify,title,message,icon,password,url);
 	} else {
-		if (!server) server = "127.0.0.1";
 		rc = growl_udp(server,appname,notify,title,message,icon,password,url);
 	}
 
