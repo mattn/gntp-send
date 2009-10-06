@@ -27,7 +27,7 @@ lib/libgrowl.a : lib/growl.dll source/growl.def
 	dlltool --def source/growl.def --dllname lib/growl.dll --output-lib $@
 
 clean : 
-	del /Q bin objs lib
+	cmd /c del /Q bin\* objs\* lib\*
 
 dirs : bin objs lib
 bin :
