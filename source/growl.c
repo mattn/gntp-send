@@ -54,15 +54,12 @@ char* gen_password_hash_alloc(const char* password, const char* salt) {
 	return md5digest;
 }
 
-EXPORT
-int growl( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
-                                const char *const icon , const char *const password , const char *url )
-{		
-	int sock = -1;
+char *growl_generate_authheader_alloc(const char*const password)
+{
 	char* salt;
-        char* salthash;
-        char* keyhash;
-		char* authheader = NULL;
+    char* salthash;
+    char* keyhash;
+	char* authheader = NULL;
 
 	if (password) {
 		srand(time(NULL));
@@ -73,8 +70,18 @@ int growl( const char *const server,const char *const appname,const char *const 
 		authheader = (char*)malloc(strlen(keyhash) + strlen(salthash) + 7);
 		sprintf(authheader, " MD5:%s.%s", keyhash, salthash);
 		free(salthash);
+		free(keyhash);
 	}
+	
+	return authheader;
+}
 
+
+int growl_tcp_register( const char *const server , const char *const appname , const char *const notify , const char *const password  )
+{
+	int sock = -1;
+
+	char *authheader = growl_generate_authheader_alloc(password);
 	sock = growl_tcp_open(server);
 	if (sock == -1) goto leave;
     
@@ -99,6 +106,20 @@ int growl( const char *const server,const char *const appname,const char *const 
 		if (len == 0) break;
 	}
 	growl_tcp_close(sock);
+	
+	leave:
+	if (authheader) free(authheader);
+
+	return (sock == 0) ? 0 : -1;
+}
+
+int growl_tcp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
+                                const char *const password, const char* const url, const char* const icon)
+{
+	int sock = -1;
+
+	char *authheader = growl_generate_authheader_alloc(password);
+	
 
 	sock = growl_tcp_open(server);
 	if (sock == -1) goto leave;
@@ -133,6 +154,20 @@ leave:
 	return (sock == 0) ? 0 : -1;
 }
 
+
+EXPORT
+int growl( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
+                                const char *const icon , const char *const password , const char *url )
+{		
+	int rc = growl_tcp_register(  server ,  appname ,  notify , password  );
+	if( rc == 0 )
+	{
+		rc = growl_tcp_notify( server, appname, notify, title,  message , password, url, icon );
+	}
+	return rc;
+}
+
+
 void growl_append_md5( unsigned char *const data , const int data_length , const char *const password )
 {
 	md5_context md5ctx;
@@ -146,6 +181,7 @@ void growl_append_md5( unsigned char *const data , const int data_length , const
 
 	memcpy( data + data_length , md5tmp , 16 );
 }
+
 
 int growl_udp_register( const char *const server , const char *const appname , const char *const notify , const char *const password  )
 {
@@ -256,12 +292,22 @@ int growl_udp( const char *const server,const char *const appname,const char *co
                                 const char *const icon , const char *const password , const char *url )
 {
 	int rc = growl_udp_register(  server ,  appname ,  notify , password  );
-	printf( "rc = %d\n" , rc );
 	if( rc == 0 )
 	{
 		rc = growl_udp_notify( server, appname, notify, title,  message , password );
 	}
 	return rc;
+}
+
+
+void growl_init()
+{
+	static int init = 0;
+	if(init == 0)
+	{
+		printf("calling srand\n");
+		srand(time(NULL));
+	}
 }
 
 

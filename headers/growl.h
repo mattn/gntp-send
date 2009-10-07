@@ -9,8 +9,16 @@ extern "C" {
 
 int growl( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const icon , const char *const password , const char *url );
+int growl_tcp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
+                                const char *const password, const char* const url, const char* const icon );
+int growl_tcp_register( const char *const server , const char *const appname , const char *const notify , const char *const password  );
+
+
 int growl_udp( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const icon , const char *const password , const char *url );
+int growl_udp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
+                                const char *const password );
+int growl_udp_register( const char *const server , const char *const appname , const char *const notify , const char *const password  );
 
 
 #ifdef __cplusplus

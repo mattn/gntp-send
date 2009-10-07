@@ -2,14 +2,10 @@
 
 int main(int argc, char **argv)
 {
-	Growl *growl = new Growl("password");
-	growl->notify("title","message");
+	Growl *growl = new Growl(GROWL_UDP,"password","gntp_send++","bob",1);
+	growl->Notify("bob","title","message");
 
-	Growl *growl2 = new Growl("localhost","password");
-	growl2->notify("tit","mes");
+	delete(growl);
 
-	Growl *growl3 = new Growl("localhost:555");
-	growl3->notify("t","m");
-
-	return 1;
+	return 0;
 }
