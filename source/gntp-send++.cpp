@@ -2,7 +2,8 @@
 
 int main(int argc, char **argv)
 {
-	Growl *growl = new Growl(GROWL_UDP,"password","gntp_send++","bob",1);
+	char *n[2] = { "alice" , "bob" };
+	Growl *growl = new Growl(GROWL_UDP,"password","gntp_send++",(const char **const)n,2);
 	growl->Notify("bob","title","message");
 
 	delete(growl);

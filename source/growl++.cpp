@@ -5,39 +5,35 @@
 #include <stdlib.h>
 
 
-Growl::Growl(const Growl_Protocol _protocol, const char *const _password, const char *const _application, const char *_notifications, const int _notifications_count)
+Growl::Growl(const Growl_Protocol _protocol, const char *const _password, const char *const _application, const char **_notifications, const int _notifications_count)
 {
 	server = strdup("localhost");
 	password = strdup(_password);
 	protocol = _protocol;
 	application = strdup(_application);
-	notifications = strdup(_notifications);
-	notifications_count = _notifications_count;
-	Register();
+	Register(_notifications, _notifications_count);
 }
 
 
-Growl::Growl(const Growl_Protocol _protocol, const char *const _server, const char *const _password, const char *const _application, const char *_notifications, const int _notifications_count )
+Growl::Growl(const Growl_Protocol _protocol, const char *const _server, const char *const _password, const char *const _application, const char **_notifications, const int _notifications_count )
 {
 	server = strdup(_server);
 	password = strdup(_password);
 	protocol = _protocol;
 	application = strdup(_application);
-        notifications = strdup(_notifications);
-        notifications_count = _notifications_count;
-	Register();
+	Register(_notifications, _notifications_count);
 }
 
 
-void Growl::Register()
+void Growl::Register(const char **const notifications, const int notifications_count)
 {
 	if( protocol == GROWL_TCP )
 	{
-		growl_tcp_register( server , application , "bob" , password );
+		growl_tcp_register( server , application , notifications , notifications_count , password );
 	}
 	else
 	{
-		growl_udp_register( server , application , "bob" , password );
+		growl_udp_register( server , application , notifications , notifications_count , password );
 	}
 }
 
@@ -55,10 +51,6 @@ Growl::~Growl()
 	if(application == NULL)
 	{
 		free(application);
-	}
-	if(notifications == NULL )
-	{	
-		free(notifications);
 	}
 }
 
