@@ -80,6 +80,7 @@ char *growl_generate_authheader_alloc(const char*const password)
 int growl_tcp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count , const char *const password  )
 {
 	int sock = -1;
+	int i=0;
 
 	char *authheader = growl_generate_authheader_alloc(password);
 	sock = growl_tcp_open(server);
@@ -90,7 +91,6 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 	growl_tcp_write(sock, "Notifications-Count: %d", notifications_count);
 	growl_tcp_write(sock, "" );
 
-	int i=0;
 	for(i=0;i<notifications_count;i++)
 	{
 		growl_tcp_write(sock, "Notification-Name: %s", notifications[i]);
