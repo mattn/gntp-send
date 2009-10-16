@@ -18,7 +18,7 @@ objs/md5.obj : source/md5.c
 objs/gntp-send.obj : source/gntp-send.c
 	cl -I headers -w -c $** -Fo$@
 
-shared : lib/growl.dll
+shared : dirs lib/growl.dll
 lib/growl.dll : objs/growl.obj objs/tcp.obj  objs/md5.obj
 	link -dll /out:$@ /def:source/growl.def $** ws2_32.lib
 

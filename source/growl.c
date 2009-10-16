@@ -76,7 +76,7 @@ char *growl_generate_authheader_alloc(const char*const password)
 	return authheader;
 }
 
-
+EXPORT
 int growl_tcp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count , const char *const password  )
 {
 	int sock = -1;
@@ -118,6 +118,7 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 	return (sock == 0) ? 0 : -1;
 }
 
+EXPORT
 int growl_tcp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const password, const char* const url, const char* const icon)
 {
@@ -187,7 +188,7 @@ void growl_append_md5( unsigned char *const data , const int data_length , const
 	memcpy( data + data_length , md5tmp , 16 );
 }
 
-
+EXPORT
 int growl_udp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count , const char *const password  )
 {
 	int register_header_length = 22+strlen(appname);
@@ -249,7 +250,7 @@ int growl_udp_register( const char *const server , const char *const appname , c
 	return rc;
 }
 
-
+EXPORT
 int growl_udp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const password )
 {
