@@ -111,7 +111,8 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 		if (len == 0) break;
 	}
 	growl_tcp_close(sock);
-	
+	sock = 0;
+
 	leave:
 	if (authheader) free(authheader);
 
