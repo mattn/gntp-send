@@ -32,8 +32,6 @@ void growl_tcp_write( int sock , const char *const format , ... )
 	vsnprintf( output , length+1 , format , ap );
 	va_end(ap);
 
-	printf( output );
-	printf( "\r\n" );
 	send( sock , output , length , 0 );
 	send( sock , "\r\n" , 2 , 0 );
 
@@ -64,7 +62,7 @@ int growl_tcp_open(const char* server) {
 	struct sockaddr_in serv_addr;
 
 	printf("open\n");	
-	if( growl_tcp_parse_hostname( server , 23054 , &serv_addr ) == -1 )
+	if( growl_tcp_parse_hostname( server , 23053 , &serv_addr ) == -1 )
 	{
 		return -1;
 	}
