@@ -61,7 +61,6 @@ int growl_tcp_open(const char* server) {
 	int sock = -1;
 	struct sockaddr_in serv_addr;
 
-	printf("open\n");	
 	if( growl_tcp_parse_hostname( server , 23053 , &serv_addr ) == -1 )
 	{
 		return -1;
