@@ -13,7 +13,7 @@
 
 #include "md5.h"
 #include "tcp.h"
-
+#include "growl.h"
 
 static const char hex_table[] = "0123456789ABCDEF";
 static char* string_to_hex_alloc(const char* str, int len) {
@@ -26,6 +26,7 @@ static char* string_to_hex_alloc(const char* str, int len) {
     }
     return tmp;
 }
+int growl_init_ = 0;
 
 char* gen_salt_alloc(int count) {
 	char* salt = (char*)malloc(count + 1);
@@ -62,7 +63,6 @@ char *growl_generate_authheader_alloc(const char*const password)
 	char* authheader = NULL;
 
 	if (password) {
-		srand(time(NULL));
 		salt = gen_salt_alloc(8);
 		keyhash = gen_password_hash_alloc(password, salt);
 		salthash = string_to_hex_alloc(salt, 8);
@@ -81,6 +81,8 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 {
 	int sock = -1;
 	int i=0;
+
+	growl_init();
 
 	char *authheader = growl_generate_authheader_alloc(password);
 	sock = growl_tcp_open(server);
@@ -127,6 +129,7 @@ int growl_tcp_notify( const char *const server,const char *const appname,const c
 
 	char *authheader = growl_generate_authheader_alloc(password);
 	
+	growl_init();
 
 	sock = growl_tcp_open(server);
 	if (sock == -1) goto leave;
@@ -183,7 +186,10 @@ void growl_append_md5( unsigned char *const data , const int data_length , const
 	memset(md5tmp, 0, sizeof(md5tmp));
 	md5_starts(&md5ctx);
 	md5_update(&md5ctx, (uint8_t*)data, data_length );
-	md5_update(&md5ctx, (uint8_t*)password, strlen(password));
+	if(password != NULL)
+	{
+		md5_update(&md5ctx, (uint8_t*)password, strlen(password));
+	}
 	md5_finish(&md5ctx, (uint8_t*)md5tmp);
 
 	memcpy( data + data_length , md5tmp , 16 );
@@ -205,6 +211,9 @@ int growl_udp_register( const char *const server , const char *const appname , c
 	uint8_t _notifications_count = notifications_count;
 	uint8_t default_notifications_count = notifications_count;
 	uint8_t j;
+
+	growl_init();
+
 	for(i=0;i<notifications_count;i++)
 	{
 		register_header_length += 3 + strlen(notifications[i]);
@@ -232,7 +241,6 @@ int growl_udp_register( const char *const server , const char *const appname , c
 		uint16_t notify_length = ntohs(strlen(notifications[i]));
 		memcpy( data + pointer, &notify_length , 2 );		
 		pointer +=2;
-		printf( "notification %d = '%s'\n" , i , notifications[i] );
 		sprintf( (char*)data + pointer , "%s" , notifications[i] );
 		pointer += strlen(notifications[i]);
 	} 
@@ -269,7 +277,7 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
 	uint16_t title_length = ntohs(strlen(title));
 	uint16_t message_length = ntohs(strlen(message));
 
-
+	growl_init();
 	memset( data , 0 ,  notify_header_length );
 	
 	pointer = 0;
@@ -319,13 +327,32 @@ int growl_udp( const char *const server,const char *const appname,const char *co
 }
 
 
-void growl_init()
+int growl_init()
 {
-	static int init = 0;
-	if(init == 0)
+	if( growl_init_ == 0)
 	{
-		printf("calling srand\n");
+		#ifdef _WIN32
+		WSADATA wsaData;
+		if( WSAStartup( MAKEWORD( 2 , 0 ) , &wsaData) != 0 ) 
+		{
+			return -1;
+		}
+		#endif
+
 		srand(time(NULL));
+		growl_init_ = 1;
+	}
+	return 1;
+}
+
+
+void growl_shutdown()
+{
+	if( growl_init_ == 1 )
+	{
+		#ifdef _WIN32
+        	WSACleanup();
+		#endif
 	}
 }
 

@@ -21,6 +21,10 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
 int growl_udp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count , const char *const password  );
 
 
+int growl_init();
+void growl_shutdown();
+
+
 #ifdef __cplusplus
 }
 #endif 

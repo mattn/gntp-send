@@ -93,10 +93,6 @@ int main(int argc, char* argv[]) {
 	char* icon = NULL;
 	char* url = NULL;
 	int tcpsend = 1;
-#ifdef _WIN32
-	WSADATA wsaData;
-	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) return -1;
-#endif
 
 	opterr = 0;
 	while ((c = getopts(argc, argv, "a:n:s:p:u") != -1)) {
@@ -123,20 +119,19 @@ int main(int argc, char* argv[]) {
 	if ((argc - optind) == 4) url = string_to_utf8_alloc(argv[optind + 3]);
 
 	if (!server) server = "127.0.0.1";
-	
+
+	growl_init();	
 	if (tcpsend) {
 		rc = growl(server,appname,notify,title,message,icon,password,url);
 	} else {
 		rc = growl_udp(server,appname,notify,title,message,icon,password,url);
 	}
+	growl_shutdown();
 
 	if (title) free(title);
 	if (message) free(message);
 	if (icon) free(icon);
 	if (url) free(url);
 
-#ifdef _WIN32
-	WSACleanup();
-#endif
 	return rc;
 }
