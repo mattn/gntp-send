@@ -13,7 +13,6 @@
 
 #include "md5.h"
 #include "tcp.h"
-#include "growl.h"
 
 static const char hex_table[] = "0123456789ABCDEF";
 static char* string_to_hex_alloc(const char* str, int len) {
@@ -26,7 +25,38 @@ static char* string_to_hex_alloc(const char* str, int len) {
     }
     return tmp;
 }
+
 int growl_init_ = 0;
+
+int growl_init()
+{
+        if( growl_init_ == 0)
+        {
+                #ifdef _WIN32
+                WSADATA wsaData;
+                if( WSAStartup( MAKEWORD( 2 , 0 ) , &wsaData) != 0 )
+                {
+                        return -1;
+                }
+                #endif
+
+                srand(time(NULL));
+                growl_init_ = 1;
+        }
+        return 1;
+}
+
+
+void growl_shutdown()
+{
+        if( growl_init_ == 1 )
+        {
+                #ifdef _WIN32
+                WSACleanup();
+                #endif
+        }
+}
+
 
 char* gen_salt_alloc(int count) {
 	char* salt = (char*)malloc(count + 1);
@@ -81,10 +111,10 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 {
 	int sock = -1;
 	int i=0;
-
+	char *authheader;
+	
 	growl_init();
-
-	char *authheader = growl_generate_authheader_alloc(password);
+	authheader = growl_generate_authheader_alloc(password);
 	sock = growl_tcp_open(server);
 	if (sock == -1) goto leave;
     
@@ -324,36 +354,6 @@ int growl_udp( const char *const server,const char *const appname,const char *co
 		rc = growl_udp_notify( server, appname, notify, title,  message , password );
 	}
 	return rc;
-}
-
-
-int growl_init()
-{
-	if( growl_init_ == 0)
-	{
-		#ifdef _WIN32
-		WSADATA wsaData;
-		if( WSAStartup( MAKEWORD( 2 , 0 ) , &wsaData) != 0 ) 
-		{
-			return -1;
-		}
-		#endif
-
-		srand(time(NULL));
-		growl_init_ = 1;
-	}
-	return 1;
-}
-
-
-void growl_shutdown()
-{
-	if( growl_init_ == 1 )
-	{
-		#ifdef _WIN32
-        	WSACleanup();
-		#endif
-	}
 }
 
 
