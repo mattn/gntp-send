@@ -81,9 +81,9 @@ int growl_tcp_open(const char* server) {
 
 void growl_tcp_close(int sock) {
 #ifdef _WIN32
-	if (sock < 0) closesocket(sock);
+	if (sock > 0) closesocket(sock);
 #else
-	if (sock < 0) close(sock);
+	if (sock > 0) close(sock);
 #endif
 }
 
