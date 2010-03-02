@@ -1,8 +1,17 @@
 #include <stdio.h>
+#ifdef _WIN32
+#ifdef GROWL_CPP_DLL
+  #define GROWL_CPP_EXPORT __declspec(dllexport)
+#else
+  #define GROWL_CPP_EXPORT __declspec(dllimport)
+#endif
+#else
+  #define GROWL_CPP_EXPORT
+#endif //_WIN32
 
 enum Growl_Protocol { GROWL_UDP , GROWL_TCP };
 
-class Growl 
+class GROWL_CPP_EXPORT Growl 
 {
 	private:
 		char *server;
