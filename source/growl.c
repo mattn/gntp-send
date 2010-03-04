@@ -1,8 +1,6 @@
 #ifdef _WIN32
 #include <windows.h>
-#define EXPORT __declspec(dllexport)
 #else
-#define EXPORT
 #include <arpa/inet.h>
 #include <stdint.h>
 #endif
@@ -106,7 +104,7 @@ char *growl_generate_authheader_alloc(const char*const password)
 	return authheader;
 }
 
-EXPORT
+
 int growl_tcp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count ,
 		const char *const password, const char* const icon  )
 {
@@ -154,7 +152,7 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 	return (sock == 0) ? 0 : -1;
 }
 
-EXPORT
+
 int growl_tcp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const password, const char* const url, const char* const icon)
 {
@@ -198,7 +196,7 @@ leave:
 }
 
 
-EXPORT
+
 int growl( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const icon , const char *const password , const char *url )
 {		
@@ -228,7 +226,7 @@ void growl_append_md5( unsigned char *const data , const int data_length , const
 	memcpy( data + data_length , md5tmp , 16 );
 }
 
-EXPORT
+
 int growl_udp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count , const char *const password  )
 {
 	int register_header_length = 22+strlen(appname);
@@ -292,7 +290,7 @@ int growl_udp_register( const char *const server , const char *const appname , c
 	return rc;
 }
 
-EXPORT
+
 int growl_udp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const password )
 {
@@ -347,7 +345,7 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
 	return rc;
 }
 
-EXPORT
+
 int growl_udp( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const icon , const char *const password , const char *url )
 {
@@ -361,7 +359,7 @@ int growl_udp( const char *const server,const char *const appname,const char *co
 
 
 #ifdef _WIN32
-EXPORT
+
 void GrowlNotify(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow) {
 	char* server = "127.0.0.1:23053";
 	char* password = NULL;
