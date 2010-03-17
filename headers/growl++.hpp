@@ -1,10 +1,14 @@
 #include <stdio.h>
 #ifdef _WIN32
-#ifdef GROWL_CPP_DLL
-  #define GROWL_CPP_EXPORT __declspec(dllexport)
-#else
-  #define GROWL_CPP_EXPORT __declspec(dllimport)
-#endif
+  #ifndef GROWL_CPP_STATIC
+    #ifdef GROWL_CPP_DLL
+      #define GROWL_CPP_EXPORT __declspec(dllexport)
+    #else
+      #define GROWL_CPP_EXPORT __declspec(dllimport)
+    #endif
+  #else
+    #define GROWL_CPP_EXPORT
+  #endif
 #else
   #define GROWL_CPP_EXPORT
 #endif //_WIN32
@@ -18,7 +22,7 @@ class GROWL_CPP_EXPORT Growl
 		char *password;
 		char *application;
 		Growl_Protocol protocol;
-		void Register(const char **const _notifications, const int _notifications_count);
+		void Register(const char **const _notifications, const int _notifications_count, const char* const icon = NULL );
 	public:
 		Growl(const Growl_Protocol _protocol, const char *const _password, const char* const _appliciation, const char **const _notifications, const int _notifications_count);
 		Growl(const Growl_Protocol _protocol, const char *const _server, const char *const _password, const char *const _application, const char **const _notifications, const int _notifications_count);

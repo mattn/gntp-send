@@ -25,11 +25,11 @@ Growl::Growl(const Growl_Protocol _protocol, const char *const _server, const ch
 }
 
 
-void Growl::Register(const char **const notifications, const int notifications_count)
+void Growl::Register(const char **const notifications, const int notifications_count , const char *const icon )
 {
 	if( protocol == GROWL_TCP )
 	{
-		growl_tcp_register( server , application , notifications , notifications_count , password );
+		growl_tcp_register( server , application , notifications , notifications_count , password , icon );
 	}
 	else
 	{

@@ -11,6 +11,7 @@
 
 #include "md5.h"
 #include "tcp.h"
+#include "growl.h"
 
 static const char hex_table[] = "0123456789ABCDEF";
 static char* string_to_hex_alloc(const char* str, int len) {
@@ -26,6 +27,7 @@ static char* string_to_hex_alloc(const char* str, int len) {
 
 int growl_init_ = 0;
 
+GROWL_EXPORT
 int growl_init()
 {
         if( growl_init_ == 0)
@@ -45,6 +47,7 @@ int growl_init()
 }
 
 
+GROWL_EXPORT
 void growl_shutdown()
 {
         if( growl_init_ == 1 )
@@ -105,6 +108,7 @@ char *growl_generate_authheader_alloc(const char*const password)
 }
 
 
+GROWL_EXPORT
 int growl_tcp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count ,
 		const char *const password, const char* const icon  )
 {
@@ -153,6 +157,7 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 }
 
 
+GROWL_EXPORT
 int growl_tcp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const password, const char* const url, const char* const icon)
 {
@@ -197,6 +202,7 @@ leave:
 
 
 
+GROWL_EXPORT
 int growl( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const icon , const char *const password , const char *url )
 {		
@@ -227,6 +233,7 @@ void growl_append_md5( unsigned char *const data , const int data_length , const
 }
 
 
+GROWL_EXPORT
 int growl_udp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count , const char *const password  )
 {
 	int register_header_length = 22+strlen(appname);
@@ -291,6 +298,7 @@ int growl_udp_register( const char *const server , const char *const appname , c
 }
 
 
+GROWL_EXPORT
 int growl_udp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const password )
 {
@@ -346,6 +354,7 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
 }
 
 
+GROWL_EXPORT
 int growl_udp( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const icon , const char *const password , const char *url )
 {
