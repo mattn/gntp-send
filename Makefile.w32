@@ -1,14 +1,17 @@
-all: dirs bin/gntp-send.exe
+all: dirs bin/gntp-send.exe bin/gntp-send++.exe
 
 bin/gntp-send.exe : objs/gntp-send.o lib/libgrowl-static.a
 	gcc $^ -o $@ -lws2_32
+
+bin/gntp-send++.exe : objs/gntp-send++.o lib/libgrowl++.a lib/libgrowl.a
+	g++ $^ -o $@
 
 lib/libgrowl-static.a : objs/growl.o objs/tcp.o  objs/md5.o
 	ar rc $@ $^
 	ranlib $@	
 
 objs/growl.o : source/growl.c
-	gcc -I headers -Wall -Wno-format-zero-length -c $< -o $@
+	gcc -D GROWL_STATIC -I headers -Wall -Wno-format-zero-length -c $< -o $@
 
 objs/tcp.o : source/tcp.c
 	gcc -I headers -Wall -c $< -o $@
@@ -17,7 +20,7 @@ objs/md5.o : source/md5.c
 	gcc -I headers -Wall -c $< -o $@
 
 objs/gntp-send.o : source/gntp-send.c
-	gcc -I headers -Wall -c $< -o $@
+	gcc -D GROWL_STATIC -I headers -Wall -c $< -o $@
 
 shared : lib/growl.dll lib/libgrowl.a
 lib/growl.dll : objs/growl.o objs/tcp.o  objs/md5.o
@@ -25,6 +28,16 @@ lib/growl.dll : objs/growl.o objs/tcp.o  objs/md5.o
 
 lib/libgrowl.a : lib/growl.dll source/growl.def
 	dlltool --def source/growl.def --dllname lib/growl.dll --output-lib $@
+
+lib/libgrowl++.a : objs/growl++.o
+	ar rc $@ $^
+	ranlib $@
+
+objs/growl++.o : source/growl++.cpp
+	g++ -D GROWL_CPP_STATIC -I headers -Wall -c $< -o $@
+
+objs/gntp-send++.o : source/gntp-send++.cpp
+	g++ -D GROWL_CPP_STATIC -I headers -Wall -c $< -o $@
 
 clean : 
 	cmd /c del /Q bin\* objs\* lib\*
