@@ -15,7 +15,7 @@ lib/libgrowl++.a : objs/growl++.o
 	ranlib $@
 
 objs/growl.o : source/growl.c
-	gcc -I headers -Wall -Wno-format-zero-length -c $< -o $@
+	gcc -D GROWL_STATIC -I headers -Wall -Wno-format-zero-length -c $< -o $@
 
 objs/tcp.o : source/tcp.c
 	gcc -I headers -Wall -c $< -o $@
