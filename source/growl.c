@@ -11,6 +11,7 @@
 
 #include "md5.h"
 #include "tcp.h"
+#include "growl.h"
 
 static const char hex_table[] = "0123456789ABCDEF";
 static char* string_to_hex_alloc(const char* str, int len) {
