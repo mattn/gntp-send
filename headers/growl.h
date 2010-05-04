@@ -34,8 +34,8 @@ GROWL_EXPORT int growl_udp_notify( const char *const server,const char *const ap
 GROWL_EXPORT int growl_udp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count , const char *const password  );
 
 
-GROWL_EXPORT int growl_init();
-GROWL_EXPORT void growl_shutdown();
+GROWL_EXPORT int growl_init(void);
+GROWL_EXPORT void growl_shutdown(void);
 
 
 #ifdef __cplusplus
