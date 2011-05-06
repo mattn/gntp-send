@@ -327,13 +327,13 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
 	pointer += 2;
 	memcpy( data + pointer , &appname_length , 2 );	
 	pointer += 2;
-	strcat( (char*)data + pointer , notify );
+	strcpy( (char*)data + pointer , notify );
 	pointer += strlen(notify);
-	strcat( (char*)data + pointer , title );
+	strcpy( (char*)data + pointer , title );
 	pointer += strlen(title);
-	strcat( (char*)data + pointer , message );
+	strcpy( (char*)data + pointer , message );
 	pointer += strlen(message);
-	strcat( (char*)data + pointer , appname );
+	strcpy( (char*)data + pointer , appname );
 	pointer += strlen(appname);
 
 
