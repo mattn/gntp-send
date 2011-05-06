@@ -119,8 +119,8 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 	if (sock == -1) goto leave;
     
 	growl_tcp_write(sock, "GNTP/1.0 REGISTER NONE %s", authheader ? authheader : "");
-	growl_tcp_write(sock, "Application-Name: %s ", appname);
-	if(icon) growl_tcp_write(sock, "Application-Icon: %s ", icon);	
+	growl_tcp_write(sock, "Application-Name: %s", appname);
+	if(icon) growl_tcp_write(sock, "Application-Icon: %s", icon);	
 	growl_tcp_write(sock, "Notifications-Count: %d", notifications_count);
 	growl_tcp_write(sock, "" );
 
