@@ -8,7 +8,7 @@
 Growl::Growl(const Growl_Protocol _protocol, const char *const _password, const char *const _application, const char **_notifications, const int _notifications_count)
 {
 	server = strdup("localhost");
-	password = strdup(_password);
+	if (_password) password = strdup(_password);
 	protocol = _protocol;
 	application = strdup(_application);
 	Register(_notifications, _notifications_count);
@@ -18,7 +18,7 @@ Growl::Growl(const Growl_Protocol _protocol, const char *const _password, const 
 Growl::Growl(const Growl_Protocol _protocol, const char *const _server, const char *const _password, const char *const _application, const char **_notifications, const int _notifications_count )
 {
 	server = strdup(_server);
-	password = strdup(_password);
+	if (_password) password = strdup(_password);
 	protocol = _protocol;
 	application = strdup(_application);
 	Register(_notifications, _notifications_count);
