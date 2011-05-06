@@ -8,6 +8,7 @@
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <netdb.h>
 #include <unistd.h>
 #endif
@@ -59,6 +60,11 @@ char *growl_tcp_read(int sock) {
 
 int growl_tcp_open(const char* server) {
 	int sock = -1;
+#ifdef _WIN32
+	char on;
+#else
+	int on;
+#endif
 	struct sockaddr_in serv_addr;
 
 	if( growl_tcp_parse_hostname( server , 23053 , &serv_addr ) == -1 )
@@ -73,6 +79,12 @@ int growl_tcp_open(const char* server) {
 
 	if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
 		perror("connect");
+		return -1;
+	}
+
+	on = 1;
+	if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on)) == -1) {
+		perror("setsockopt");
 		return -1;
 	}
 
