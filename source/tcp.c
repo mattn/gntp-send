@@ -21,6 +21,7 @@ void growl_tcp_write( int sock , const char *const format , ... )
 {
 	int length;
 	char *output;
+	char *stop;
 
 	va_list ap;
 
@@ -32,6 +33,8 @@ void growl_tcp_write( int sock , const char *const format , ... )
 	output = (char*)malloc(length+1);
 	vsnprintf( output , length+1 , format , ap );
 	va_end(ap);
+
+	while ((stop = strstr(output, "\r\n"))) strcpy(stop, stop + 1);
 
 	send( sock , output , length , 0 );
 	send( sock , "\r\n" , 2 , 0 );
