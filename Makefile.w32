@@ -1,4 +1,4 @@
-all: dirs bin/gntp-send-static.exe bin/gntp-send-shared.exe bin/gntp-send-static++.exe bin/gntp-send-shared.exe
+all: dirs bin/gntp-send-static.exe bin/gntp-send-shared.exe bin/gntp-send-static++.exe bin/gntp-send-shared++.exe
 
 
 
@@ -20,7 +20,7 @@ lib/libgrowl-static.a : objs/growl-static.o objs/tcp.o  objs/md5.o
 	ar rc $@ $^
 	ranlib $@	
 
-lib/libgrowl-static++.a : objs/growl-static++.o
+lib/libgrowl-static++.a : objs/growl-static++.o objs/tcp.o objs/md5.o
 	ar rc $@ $^
 	ranlib $@
 

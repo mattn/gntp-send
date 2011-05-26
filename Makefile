@@ -10,7 +10,7 @@ lib/libgrowl.a : objs/growl.o objs/tcp.o  objs/md5.o
 	ar rc $@ $^
 	ranlib $@	
 
-lib/libgrowl++.a : objs/growl++.o
+lib/libgrowl++.a : objs/growl++.o objs/tcp.o objs/md5.o
 	ar rc $@ $^
 	ranlib $@
 

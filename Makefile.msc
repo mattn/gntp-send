@@ -16,7 +16,7 @@ bin/gntp-send-shared++.exe : objs/gntp-send-shared++.obj lib/libgrowl-shared++.l
 lib/libgrowl-static.lib  : objs/growl-static.obj objs/tcp.obj  objs/md5.obj
 	lib /out:$@ $**
 
-lib/libgrowl-static++.lib  : objs/growl-static++.obj 
+lib/libgrowl-static++.lib  : objs/growl-static++.obj objs/tcp.obj objs/md5.obj
 	lib /out:$@ $**
 
 lib/libgrowl-shared.lib : objs/growl-shared.obj objs/tcp.obj objs/md5.obj
