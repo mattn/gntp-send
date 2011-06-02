@@ -25,7 +25,7 @@ static char* string_to_hex_alloc(const char* str, int len) {
     return tmp;
 }
 
-int growl_init_ = 0;
+static int growl_init_ = 0;
 
 int growl_init()
 {
