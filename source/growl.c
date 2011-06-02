@@ -356,6 +356,7 @@ int growl_udp( const char *const server,const char *const appname,const char *co
 		rc = growl_udp_notify( server, appname, notify, title,  message , password );
 	}
 	return rc;
+	(void)icon; (void)url; /* prevent unused warnigns */
 }
 
 
