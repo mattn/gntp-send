@@ -171,12 +171,7 @@ void md5_update(md5_context *ctx, const uint8_t *input, uint32_t length) {
 	}
 }
 
-const uint8_t md5_padding[64] = {
-	0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
+static const uint8_t md5_padding[64] = { 0x80 };
 
 void md5_finish(md5_context *ctx, uint8_t digest[16]) {
 	uint32_t last, padn;
@@ -200,3 +195,4 @@ void md5_finish(md5_context *ctx, uint8_t digest[16]) {
 	PUT_UINT32(ctx->state[2], digest,  8);
 	PUT_UINT32(ctx->state[3], digest, 12);
 }
+

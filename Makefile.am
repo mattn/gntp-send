@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-AM_CFLAGS = -Wall -Wextra -pedantic -I headers
+AM_CFLAGS = -Wall -Wextra -Wno-missing-field-initializers -pedantic -I headers
 AM_CXXFLAGS =
 
 nodist_include_HEADERS = headers/growl.h \

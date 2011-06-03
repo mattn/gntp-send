@@ -20,3 +20,4 @@ void md5_update(md5_context *ctx, const uint8_t *input, uint32_t length);
 void md5_finish(md5_context *ctx, uint8_t digest[16]);
 
 #endif /* _MD5_H_ */
+

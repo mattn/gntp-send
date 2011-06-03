@@ -16,16 +16,18 @@
 static const char hex_table[] = "0123456789ABCDEF";
 static char* string_to_hex_alloc(const char* str, int len) {
 	int n, l;
-	char* tmp = (char*)malloc(len * 2 + 1);
-	memset(tmp, 0, len * 2 + 1);
-    for (l = 0, n = 0; l < len; l++) {
-        tmp[n++] = hex_table[(str[l] & 0xF0) >> 4];
-        tmp[n++] = hex_table[str[l] & 0x0F];
+	char* tmp = (char*)calloc(1, len * 2 + 1);
+	if (tmp)
+    {
+        for (l = 0, n = 0; l < len; l++) {
+            tmp[n++] = hex_table[(str[l] & 0xF0) >> 4];
+            tmp[n++] = hex_table[str[l] & 0x0F];
+        }
     }
     return tmp;
 }
 
-static int growl_init_ = 0;
+static volatile int growl_init_ = 0;
 
 int growl_init()
 {
@@ -67,10 +69,9 @@ char* gen_salt_alloc(int count) {
 
 char* gen_password_hash_alloc(const char* password, const char* salt) {
 	md5_context md5ctx;
-	char md5tmp[20];
+	char md5tmp[20] = {0};
 	char* md5digest;
 
-	memset(md5tmp, 0, sizeof(md5tmp));
 	md5_starts(&md5ctx);
 	md5_update(&md5ctx, (uint8_t*)password, strlen(password));
 	md5_update(&md5ctx, (uint8_t*)salt, strlen(salt));
@@ -86,15 +87,12 @@ char* gen_password_hash_alloc(const char* password, const char* salt) {
 
 char *growl_generate_authheader_alloc(const char*const password)
 {
-	char* salt;
-    char* salthash;
-    char* keyhash;
 	char* authheader = NULL;
 
 	if (password) {
-		salt = gen_salt_alloc(8);
-		keyhash = gen_password_hash_alloc(password, salt);
-		salthash = string_to_hex_alloc(salt, 8);
+		char *salt = gen_salt_alloc(8);
+		char *keyhash = gen_password_hash_alloc(password, salt);
+		char *salthash = string_to_hex_alloc(salt, 8);
 		free(salt);
 		authheader = (char*)malloc(strlen(keyhash) + strlen(salthash) + 7);
 		sprintf(authheader, " MD5:%s.%s", keyhash, salthash);
@@ -148,7 +146,7 @@ int growl_tcp_register( const char *const server , const char *const appname , c
 	sock = 0;
 
 	leave:
-	if (authheader) free(authheader);
+	free(authheader);
 
 	return (sock == 0) ? 0 : -1;
 }
@@ -191,7 +189,7 @@ int growl_tcp_notify( const char *const server,const char *const appname,const c
 	sock = 0;
 
 leave:
-	if (authheader) free(authheader);
+	free(authheader);
 
 	return (sock == 0) ? 0 : -1;
 }
@@ -213,9 +211,8 @@ int growl( const char *const server,const char *const appname,const char *const 
 void growl_append_md5( unsigned char *const data , const int data_length , const char *const password )
 {
 	md5_context md5ctx;
-	char md5tmp[20];
+	char md5tmp[20] = {0};
 
-	memset(md5tmp, 0, sizeof(md5tmp));
 	md5_starts(&md5ctx);
 	md5_update(&md5ctx, (uint8_t*)data, data_length );
 	if(password != NULL)
@@ -250,9 +247,7 @@ int growl_udp_register( const char *const server , const char *const appname , c
 	{
 		register_header_length += 3 + strlen(notifications[i]);
 	}	
-	data = (unsigned char*)malloc(register_header_length);
-	memset( data , 0 ,  register_header_length );
-
+	data = (unsigned char*)calloc(1, register_header_length);
 
 	pointer = 0;
 	memcpy( data + pointer , &GROWL_PROTOCOL_VERSION , 1 );	
@@ -296,7 +291,7 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
                                 const char *const password )
 {
 	int notify_header_length = 28 + strlen(appname)+strlen(notify)+strlen(message)+strlen(title);
-	unsigned char *data = (unsigned char*)malloc(notify_header_length);
+	unsigned char *data = (unsigned char*)calloc(1, notify_header_length);
 	int pointer = 0;
 	int rc = 0;
 
@@ -310,7 +305,6 @@ int growl_udp_notify( const char *const server,const char *const appname,const c
 	uint16_t message_length = ntohs(strlen(message));
 
 	growl_init();
-	memset( data , 0 ,  notify_header_length );
 	
 	pointer = 0;
 	memcpy( data + pointer , &GROWL_PROTOCOL_VERSION , 1 );	
@@ -362,7 +356,7 @@ int growl_udp( const char *const server,const char *const appname,const char *co
 
 #ifdef _WIN32
 
-void GrowlNotify(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow) {
+static void GrowlNotify_impl_(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow) {
 	char* server = "127.0.0.1:23053";
 	char* password = NULL;
 	char* appname = "gntp-send";
@@ -373,9 +367,6 @@ void GrowlNotify(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow) {
 	char* url = NULL;
 	char* first = strdup(lpszCmdLine);
 	char* ptr = first;
-	int rc;
-	WSADATA wsaData;
-	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) return;
 	#define SKIP(x)	while (*x && *x != ' ') x++; if (*x == ' ') *x++ = 0;
 	server = ptr;  SKIP(ptr);
 	appname = ptr; SKIP(ptr);
@@ -384,8 +375,15 @@ void GrowlNotify(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow) {
 	message = ptr; SKIP(ptr);
 	icon = ptr;    SKIP(ptr);
 	url = ptr;     SKIP(ptr);
-	rc = growl(server,appname,notify,title,message,icon,password,url);
+	growl(server,appname,notify,title,message,icon,password,url);
+	free(first);
+}
+
+void GrowlNotify(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow) {
+	WSADATA wsaData;
+	if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0) return;
+	GrowlNotify_impl_(hwnd, hinst, lpszCmdLine, nCmdShow);
 	WSACleanup();
-	free(ptr);
 }
 #endif
+

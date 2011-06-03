@@ -6,21 +6,17 @@
 
 
 Growl::Growl(const Growl_Protocol _protocol, const char *const _password, const char *const _application, const char **_notifications, const int _notifications_count)
+	: server(strdup("localhost")), password(_password ? strdup(_password) : NULL),
+	protocol(_protocol), application(strdup(_application))
 {
-	server = strdup("localhost");
-	if (_password) password = strdup(_password);
-	protocol = _protocol;
-	application = strdup(_application);
 	Register(_notifications, _notifications_count);
 }
 
 
 Growl::Growl(const Growl_Protocol _protocol, const char *const _server, const char *const _password, const char *const _application, const char **_notifications, const int _notifications_count )
+	: server(strdup(_server)), password(_password ? strdup(_password) : NULL),
+	protocol(_protocol), application(strdup(_application))
 {
-	server = strdup(_server);
-	if (_password) password = strdup(_password);
-	protocol = _protocol;
-	application = strdup(_application);
 	Register(_notifications, _notifications_count);
 }
 
@@ -31,7 +27,7 @@ void Growl::Register(const char **const notifications, const int notifications_c
 	{
 		growl_tcp_register( server , application , notifications , notifications_count , password , icon );
 	}
-	else
+	else if( protocol == GROWL_UDP )
 	{
 		growl_udp_register( server , application , notifications , notifications_count , password );
 	}
@@ -40,24 +36,15 @@ void Growl::Register(const char **const notifications, const int notifications_c
 
 Growl::~Growl()
 {
-	if(server != NULL)	
-	{
-		free(server);
-	}
-	if(password != NULL)
-	{
-		free(password);
-	}
-	if(application == NULL)
-	{
-		free(application);
-	}
+	free(server);
+	free(password);
+	free(application);
 }
 
 
 void Growl::Notify(const char *const notification, const char *const title, const char* const message)
 {
-	Growl::Notify(notification, title, message, NULL, NULL);
+	Notify(notification, title, message, NULL, NULL);
 }
 
 
@@ -67,8 +54,9 @@ void Growl::Notify(const char *const notification, const char *const title, cons
         {
                 growl_tcp_notify( server , application , notification , title , message , password , url , icon );
         }
-        else
+        else if( protocol == GROWL_UDP )
         {
                 growl_udp_notify( server , application , notification , title , message , password );
         }
 }
+

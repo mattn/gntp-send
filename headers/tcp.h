@@ -11,3 +11,4 @@ void growl_tcp_close(int sock);
 int growl_tcp_datagram( const char *server , const unsigned char *data , const int data_length );
 
 #endif /* _TCP_H_ */
+

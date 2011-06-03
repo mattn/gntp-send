@@ -44,3 +44,4 @@ GROWL_EXPORT void growl_shutdown(void);
 
 
 #endif /* _GROWL_H_ */
+

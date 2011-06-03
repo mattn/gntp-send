@@ -15,7 +15,7 @@
 
 #include "tcp.h"
 
-int growl_tcp_parse_hostname( const char *const server , int default_port , struct sockaddr_in *const sockaddr  );
+static int growl_tcp_parse_hostname( const char *const server , int default_port , struct sockaddr_in *const sockaddr  );
 
 void growl_tcp_write( int sock , const char *const format , ... ) 
 {
@@ -53,8 +53,11 @@ char *growl_tcp_read(int sock) {
 		if (c == '\n') break;
 		line[pos++] = c;
 		if (pos >= len) {
+			char *tmp;
 			len += growsize;
-			line = (char*) realloc(line, len);
+			tmp = (char*) realloc(line, len);
+			if (!tmp) free(line);
+			line = tmp;
 		}
 	}
 	line[pos] = 0;
@@ -68,7 +71,7 @@ int growl_tcp_open(const char* server) {
 #else
 	int on;
 #endif
-	struct sockaddr_in serv_addr;
+	struct sockaddr_in serv_addr = {0};
 
 	if( growl_tcp_parse_hostname( server , 23053 , &serv_addr ) == -1 )
 	{
@@ -122,7 +125,6 @@ int growl_tcp_parse_hostname( const char *const server , int default_port , stru
 		return -1;
 	}
 	
-	memset( sockaddr , 0 , sizeof(sockaddr) );
 	sockaddr->sin_family = AF_INET;
 	memcpy( &sockaddr->sin_addr , host_ent->h_addr , host_ent->h_length );
 	sockaddr->sin_port = htons(default_port);
@@ -133,7 +135,7 @@ int growl_tcp_parse_hostname( const char *const server , int default_port , stru
 
 int growl_tcp_datagram( const char *server , const unsigned char *data , const int data_length )
 {
-	struct sockaddr_in serv_addr;
+	struct sockaddr_in serv_addr = {0};
 	int sock = 0;
 
 	if( growl_tcp_parse_hostname( server , 9887 , &serv_addr ) == -1 )
@@ -156,3 +158,4 @@ int growl_tcp_datagram( const char *server , const unsigned char *data , const i
 		return 1;
 	}
 }
+
