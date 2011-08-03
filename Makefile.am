@@ -21,6 +21,9 @@ libgrowl___la_SOURCES = source/growl++.cpp
 libgrowl___la_LIBADD = libgrowl.la
 
 bin_PROGRAMS = gntp-send gntp-send++
+noinst_HEADERS = headers/growl.h \
+				 headers/md5.h \
+				 headers/tcp.h
 
 # gntp-send
 gntp_send_CFLAGS = $(AM_CFLAGS)
