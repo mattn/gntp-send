@@ -17,6 +17,11 @@
 
 static int growl_tcp_parse_hostname( const char *const server , int default_port , struct sockaddr_in *const sockaddr  );
 
+void growl_tcp_write_raw( int sock, const unsigned char * data, const int data_length )
+{
+	send(sock, data, data_length, 0);
+}
+
 void growl_tcp_write( int sock , const char *const format , ... ) 
 {
 	int length;
@@ -31,6 +36,10 @@ void growl_tcp_write( int sock , const char *const format , ... )
 
 	va_start(ap,format);
 	output = (char*)malloc(length+1);
+	if (!output) {
+		va_end(ap);
+		return;
+	}
 	vsnprintf( output , length+1 , format , ap );
 	va_end(ap);
 
@@ -46,21 +55,26 @@ char *growl_tcp_read(int sock) {
 	const int growsize = 80;
 	char c = 0;
 	char* line = (char*) malloc(growsize);
-	int len = growsize, pos = 0;
-	while (line) {
-		if (recv(sock, &c, 1, 0) <= 0) break;
-		if (c == '\r') continue;
-		if (c == '\n') break;
-		line[pos++] = c;
-		if (pos >= len) {
-			char *tmp;
-			len += growsize;
-			tmp = (char*) realloc(line, len);
-			if (!tmp) free(line);
-			line = tmp;
+	if (line) {
+		int len = growsize, pos = 0;
+		char* newline;
+		while (line) {
+			if (recv(sock, &c, 1, 0) <= 0) break;
+			if (c == '\r') continue;
+			if (c == '\n') break;
+			line[pos++] = c;
+			if (pos >= len) {
+				len += growsize;
+				newline = (char*) realloc(line, len);
+				if (!newline) {
+					free(line);
+					return NULL;
+				}
+				line = newline;
+			}
 		}
+		line[pos] = 0;
 	}
-	line[pos] = 0;
 	return line;
 }
 
