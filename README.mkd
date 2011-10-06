@@ -1,0 +1,85 @@
+gntp-send
+=========
+
+* a command line binary for sending notifications to growl
+* a library for integrating growl into you c or c++ based applications
+
+Platforms
+---------
+
+Sending notifications from Windows / Linux / Mac is supported. Unixes in general should be supported but are untested.
+Notifications may be received by Growl on Mac or GrowlForWindows on Windows.
+
+* windows
+* linux /mac
+
+
+C Functions
+-----------
+
+    int growl( server , appname, notify , title , message , icon , password , url  )
+
+Send tcp notification. Currently this is supported only by GrowlForWindows
+
+* server - hostname to send notification to , port can optionally be specified e.g hostname:80
+* appame - id for application sending notification
+* tite - title for notification
+* message -  notification text
+* icon - optional url for notification icon or NULL
+* password 
+* url - website to direct user to if they click notification or NULL
+
+    int growl_udp( server , appname, notify , title , message , icon , password , url  )
+
+Send udp notification. This is supported by both GrowlForWindows and Mac Growl.
+
+As above except icon and url are ignored.
+
+C++ Objects
+-----------
+
+    Growl *grow = new Growl( protocol , password , appname , notifications , notifications_count );
+    growl->Notify( notification1 , title , message );
+    growl->Notify( notification2 , title , message );
+
+Building for MinGW
+------------------
+
+MinGW is basically gcc for Windows. make is required to build using MinGW.
+To build the gntp-send.exe executable and libraries required for integration run
+
+    mingw32-make -f Makefile.w32
+
+Building for Visual Studio
+--------------------------
+
+nmake is required to build using Visual Studio.
+To build the gntp-send.exe executable and libraries required for integration run
+
+    nmake -f Makefile.msc
+
+Building for UNIX
+-----------------
+
+Max OS X is basically a Unix varient and is covered by these instructions.
+gcc/g++ and make are required for building.
+To build gntp-send and the libraries required for integration run
+
+    make -f Makefile
+
+Precompiled Binaries
+--------------------
+
+Peter Sinnott is provided binaries for windows.
+see: https://github.com/psinnott/gntp-send
+
+License
+-------
+
+gntp-send and libraries are provided under BSD license.
+
+Authors
+-------
+
+Yasuhiro Matsumoto `<mattn.jp@gmail.com>`
+Peter Sinnott `<link@redbrick.dcu.ie>`
