@@ -93,7 +93,7 @@ Contribute
 
 Please fork on github, and send me pull-requests.
 
-Note to change my code style.
+Note to keep my code style.
 
 Authors
 -------
