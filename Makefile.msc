@@ -27,37 +27,37 @@ lib/libgrowl-shared++.lib : lib/libgrowl-shared.lib objs/growl-shared++.obj
 
 
 
-objs/gntp-send-static.obj : source/gntp-send.c
-	cl -D GROWL_STATIC -I headers -w -c $** -Fo$@
+objs/gntp-send-static.obj : src/gntp-send.c
+	cl -D GROWL_STATIC -I include -w -c $** -Fo$@
 
-objs/gntp-send-static++.obj : source/gntp-send++.cpp
-	cl -D GROWL_STATIC -D GROWL_CPP_STATIC -I headers -w -c $** -Fo$@
+objs/gntp-send-static++.obj : src/gntp-send++.cpp
+	cl -D GROWL_STATIC -D GROWL_CPP_STATIC -I include -w -c $** -Fo$@
 
-objs/growl-static.obj : source/growl.c
-	cl -D GROWL_STATIC -I headers  -c $** -Fo$@
+objs/growl-static.obj : src/growl.c
+	cl -D GROWL_STATIC -I include  -c $** -Fo$@
 
-objs/growl-static++.obj : source/growl++.cpp
-	cl -D GROWL_STATIC -D GROWL_CPP_STATIC  -I headers -w -c $** -Fo$@
-
-
-objs/gntp-send-shared.obj : source/gntp-send.c
-	cl  -I headers -w -c $** -Fo$@
-
-objs/gntp-send-shared++.obj : source/gntp-send++.cpp
-	cl -I headers -w -c $** -Fo$@
-
-objs/growl-shared.obj : source/growl.c
-	cl -D GROWL_DLL -I headers -w  -c $** -Fo$@
-
-objs/growl-shared++.obj : source/growl++.cpp
-	cl -D GROWL_CPP_DLL -D GROWL_DLL -I headers -w -c $** -Fo$@
+objs/growl-static++.obj : src/growl++.cpp
+	cl -D GROWL_STATIC -D GROWL_CPP_STATIC  -I include -w -c $** -Fo$@
 
 
-objs/tcp.obj : source/tcp.c
-	cl -I headers -w -c $** -Fo$@
+objs/gntp-send-shared.obj : src/gntp-send.c
+	cl  -I include -w -c $** -Fo$@
 
-objs/md5.obj : source/md5.c
-	cl -I headers -w -c $** -Fo$@
+objs/gntp-send-shared++.obj : src/gntp-send++.cpp
+	cl -I include -w -c $** -Fo$@
+
+objs/growl-shared.obj : src/growl.c
+	cl -D GROWL_DLL -I include -w  -c $** -Fo$@
+
+objs/growl-shared++.obj : src/growl++.cpp
+	cl -D GROWL_CPP_DLL -D GROWL_DLL -I include -w -c $** -Fo$@
+
+
+objs/tcp.obj : src/tcp.c
+	cl -I include -w -c $** -Fo$@
+
+objs/md5.obj : src/md5.c
+	cl -I include -w -c $** -Fo$@
 
 
 
