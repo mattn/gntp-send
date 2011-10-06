@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
 	int tcpsend = 1;
 
 	opterr = 0;
-	while ((c = getopts(argc, argv, "a:n:s:p:u") != -1)) {
+	while ((c = getopts(argc, argv, "a:n:s:p:u")) != -1) {
 		switch (optopt) {
 		case 'a': appname = optarg; break;
 		case 'n': notify = optarg; break;
