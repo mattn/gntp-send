@@ -45,3 +45,4 @@ GROWL_EXPORT void growl_shutdown(void);
 
 #endif /* _GROWL_H_ */
 
+/* vim:set et sw=2 ts=2 ai: */

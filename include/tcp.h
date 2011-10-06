@@ -13,3 +13,4 @@ int growl_tcp_datagram( const char *server , const unsigned char *data , const i
 
 #endif /* _TCP_H_ */
 
+/* vim:set et sw=2 ts=2 ai: */
