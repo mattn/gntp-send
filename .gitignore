@@ -1,10 +1,16 @@
+bin
+obj
+lib
+build
 .deps
 .libs
+*.a
 *.la
 *.lo
 *.o
 *.so
 *.desktop
+*.swp
 autom4te.cache
 aclocal.m4
 compile
@@ -14,8 +20,6 @@ config.status
 config.sub
 configure
 depcomp
-gol
-growl-for-linux-*.tar.*
 install-sh
 INSTALL
 libtool
@@ -24,3 +28,4 @@ m4
 missing
 Makefile
 Makefile.in
+tags
