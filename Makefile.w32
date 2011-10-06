@@ -11,7 +11,7 @@ CFLAGS = -Wall -D GROWL_STATIC
 CPPFLAGS = -Wall -D GROWL_STATIC -D GROWL_CPP_STATIC
 LDFLAGS = -lws2_32
 LIBTARGET = lib/libgrowl.a
-LIBTARGET = lib/libgrowl++.a
+LIBPPTARGET = lib/libgrowl++.a
 endif
 
 all: dirs bin/gntp-send.exe bin/gntp-send++.exe
