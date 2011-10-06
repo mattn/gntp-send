@@ -8,6 +8,7 @@ Platforms
 ---------
 
 Sending notifications from Windows / Linux / Mac is supported. Unixes in general should be supported but are untested.
+
 Notifications may be received by Growl on Mac or GrowlForWindows on Windows.
 
 * windows
@@ -46,6 +47,7 @@ Building for MinGW
 ------------------
 
 MinGW is basically gcc for Windows. make is required to build using MinGW.
+
 To build the gntp-send.exe executable and libraries required for integration run
 
     mingw32-make -f Makefile.w32
@@ -54,6 +56,7 @@ Building for Visual Studio
 --------------------------
 
 nmake is required to build using Visual Studio.
+
 To build the gntp-send.exe executable and libraries required for integration run
 
     nmake -f Makefile.msc
@@ -62,7 +65,9 @@ Building for UNIX
 -----------------
 
 Max OS X is basically a Unix varient and is covered by these instructions.
+
 gcc/g++ and make are required for building.
+
 To build gntp-send and the libraries required for integration run
 
     make -f Makefile
@@ -71,6 +76,7 @@ Precompiled Binaries
 --------------------
 
 Peter Sinnott is provided binaries for windows.
+
 see: https://github.com/psinnott/gntp-send
 
 License
@@ -82,10 +88,12 @@ Contribute
 ----------
 
 Please fork on github, and send me pull-requests.
+
 Note to change my code style.
 
 Authors
 -------
 
 Yasuhiro Matsumoto `<mattn.jp@gmail.com>`
+
 Peter Sinnott `<link@redbrick.dcu.ie>`
