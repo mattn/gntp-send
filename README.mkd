@@ -18,7 +18,7 @@ Notifications may be received by Growl on Mac or GrowlForWindows on Windows.
 C Functions
 -----------
 
-    int growl( server , appname, notify , title , message , icon , password , url  )
+    int growl(server, appname, notify, title, message, icon, password, url)
 
 Send tcp notification. Currently this is supported only by GrowlForWindows
 
@@ -30,7 +30,9 @@ Send tcp notification. Currently this is supported only by GrowlForWindows
 * password 
 * url - website to direct user to if they click notification or NULL
 
-    int growl_udp( server , appname, notify , title , message , icon , password , url  )
+```
+int growl_udp(server, appname, notify, title, message, icon, password, url)
+```
 
 Send udp notification. This is supported by both GrowlForWindows and Mac Growl.
 
@@ -39,9 +41,11 @@ As above except icon and url are ignored.
 C++ Objects
 -----------
 
-    Growl *grow = new Growl( protocol , password , appname , notifications , notifications_count );
-    growl->Notify( notification1 , title , message );
-    growl->Notify( notification2 , title , message );
+```
+Growl *grow = new Growl(protocol, password, appname, notifications, notifications_count);
+growl->Notify(notification1, title, message);
+growl->Notify(notification2, title, message);
+```
 
 Building for MinGW
 ------------------
