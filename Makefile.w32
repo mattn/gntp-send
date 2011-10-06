@@ -1,81 +1,75 @@
-all: dirs bin/gntp-send-static.exe bin/gntp-send-shared.exe bin/gntp-send-static++.exe bin/gntp-send-shared++.exe
+USEDLL=yes
+
+ifeq (yes, $(USEDLL))
+CFLAGS = -Wall -D GROWL_DLL
+CPPFLAGS = -Wall -D GROWL_DLL -D GROWL_CPP_DLL
+LDFLAGS = -shared -lws2_32
+LIBTARGET = lib/libgrowl.dll
+LIBPPTARGET = lib/libgrowl++.dll
+else
+CFLAGS = -Wall -D GROWL_STATIC
+CPPFLAGS = -Wall -D GROWL_STATIC -D GROWL_CPP_STATIC
+LDFLAGS = -lws2_32
+LIBTARGET = lib/libgrowl.a
+LIBTARGET = lib/libgrowl++.a
+endif
+
+all: dirs bin/gntp-send.exe bin/gntp-send++.exe
 
 
 
-bin/gntp-send-static.exe : objs/gntp-send-static.o lib/libgrowl-static.a
-	gcc $^ -o $@ -lws2_32
+bin/gntp-send.exe : obj/gntp-send.o $(LIBTARGET)
+	gcc $^ -o $@ $(LDFLAGS)
 
-bin/gntp-send-static++.exe : objs/gntp-send-static++.o lib/libgrowl-static++.a lib/libgrowl-static.a
-	g++ $^ -o $@ -lws2_32
-
-bin/gntp-send-shared.exe : objs/gntp-send-shared.o lib/libgrowl-shared.a
-	gcc $^ -o $@ -lws2_32
-
-bin/gntp-send-shared++.exe : objs/gntp-send-shared++.o lib/libgrowl-shared++.a lib/libgrowl-shared.a
-	g++ $^ -o $@ -lws2_32
+bin/gntp-send++.exe : obj/gntp-send++.o $(LIBPPTARGET)
+	g++ $^ -o $@ $(LDFLAGS)
 
 
-
-lib/libgrowl-static.a : objs/growl-static.o objs/tcp.o  objs/md5.o
+lib/libgrowl.a : obj/growl.o obj/tcp.o  obj/md5.o
 	ar rc $@ $^
 	ranlib $@	
 
-lib/libgrowl-static++.a : objs/growl-static++.o objs/tcp.o objs/md5.o
+lib/libgrowl++.a : obj/growl++.o obj/tcp.o obj/md5.o
 	ar rc $@ $^
 	ranlib $@
 
-lib/libgrowl-shared.a: objs/growl-shared.o objs/tcp.o  objs/md5.o
-	gcc -shared -o lib/libgrowl.dll $^ -Wl,--out-implib,$@ -l ws2_32
+lib/libgrowl.dll: obj/growl.o obj/tcp.o  obj/md5.o
+	gcc -o lib/libgrowl.dll $^ -Wl,--out-implib,$@ $(LDFLAGS)
 
-lib/libgrowl-shared++.a: lib/libgrowl-shared.a objs/growl-shared++.o
-	g++ -shared -o lib/libgrowl++.dll objs/growl-shared++.o -Wl,--out-implib,$@ -l ws2_32 lib/libgrowl-shared.a
-
-
-
-objs/gntp-send-static.o : src/gntp-send.c
-	gcc -D GROWL_STATIC -I include -Wall -c $< -o $@
-
-objs/gntp-send-static++.o : src/gntp-send++.cpp
-	g++ -D GROWL_STATIC -D GROWL_CPP_STATIC -I include -Wall -c $< -o $@
-
-objs/growl-static.o : src/growl.c
-	gcc -D GROWL_STATIC -I include -Wall -Wno-format-zero-length -c $< -o $@
-
-objs/growl-static++.o : src/growl++.cpp
-	g++ -D GROWL_STATIC -D GROWL_CPP_STATIC  -I include -Wall -c $< -o $@
+lib/libgrowl++.dll: obj/growl++.o obj/growl.o obj/tcp.o  obj/md5.o
+	g++ -o lib/libgrowl++.dll $^ -Wl,--out-implib,$@ $(LDFLAGS)
 
 
 
-objs/gntp-send-shared.o : src/gntp-send.c
-	gcc  -I include -Wall -c $< -o $@
+obj/gntp-send.o : src/gntp-send.c
+	gcc $(CFLAGS) -I include -c $< -o $@
 
-objs/gntp-send-shared++.o : src/gntp-send++.cpp
-	g++ -I include -Wall -c $< -o $@
+obj/gntp-send++.o : src/gntp-send.cpp
+	g++ $(CPPFLAGS) -I include -c $< -o $@
 
-objs/growl-shared.o : src/growl.c
-	gcc -D GROWL_DLL -I include -Wall -Wno-format-zero-length -c $< -o $@
+obj/growl.o : src/growl.c
+	gcc $(CFLAGS) -I include -c $< -o $@
 
-objs/growl-shared++.o : src/growl++.cpp
-	g++ -D GROWL_CPP_DLL -D GROWL_DLL -I include -Wall -c $< -o $@
-
-
+obj/growl++.o : src/growl.cpp
+	g++ $(CPPFLAGS) -I include -c $< -o $@
 
 
-objs/tcp.o : src/tcp.c
-	gcc -I include -Wall -c $< -o $@
 
-objs/md5.o : src/md5.c
-	gcc -I include -Wall -c $< -o $@
+obj/tcp.o : src/tcp.c
+	gcc -I include -c $< -o $@
+
+obj/md5.o : src/md5.c
+	gcc -I include -c $< -o $@
 
 
 
 clean : 
-	del /Q bin\* objs\* lib\*
+	del /Q bin\* obj\* lib\*
 
-dirs : bin objs lib
+dirs : bin obj lib
 bin :
 	mkdir $@
-objs :
+obj :
 	mkdir $@
 lib :
 	mkdir $@

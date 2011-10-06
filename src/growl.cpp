@@ -1,5 +1,4 @@
-#include <growl++.hpp>
-#include <growl.h>
+#include <growl.hpp>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

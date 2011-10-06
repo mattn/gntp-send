@@ -1,6 +1,6 @@
 #include <memory>
 
-#include <growl++.hpp>
+#include <growl.hpp>
 
 int main(int argc, char **argv)
 {

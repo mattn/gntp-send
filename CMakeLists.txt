@@ -29,12 +29,12 @@ if( WITH_STATIC )
   set_target_properties( growl-static PROPERTIES COMPILE_FLAGS "-DGROWL_DLL" )
 endif( WITH_STATIC )
 
-add_library( growl++ SHARED src/growl++.cpp )
+add_library( growl++ SHARED src/growl.cpp )
 target_link_libraries ( growl++  growl)
 set_target_properties( growl++ PROPERTIES COMPILE_FLAGS "-DGROWL_CPP_DLL" )
 
 if( WITH_STATIC )
-add_library( growl++-static STATIC src/growl++.cpp )
+add_library( growl++-static STATIC src/growl.cpp )
 target_link_libraries ( growl++-static growl)
 set_target_properties( growl++-static PROPERTIES COMPILE_FLAGS "-DGROWL_CPP_DLL" )
 endif( WITH_STATIC )
@@ -42,6 +42,6 @@ endif( WITH_STATIC )
 add_executable( gntp-send src/gntp-send.c )
 target_link_libraries ( gntp-send growl)
 
-add_executable( gntp-send++ src/gntp-send++.cpp )
+add_executable( gntp-send++ src/gntp-send.cpp )
 target_link_libraries ( gntp-send++ growl growl++)
 
