@@ -78,6 +78,12 @@ License
 
 gntp-send and libraries are provided under BSD license.
 
+Contribute
+----------
+
+Please fork on github, and send me pull-requests.
+Note to change my code style.
+
 Authors
 -------
 
