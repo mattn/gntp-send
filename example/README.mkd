@@ -1,0 +1,26 @@
+How to do it
+============
+
+This is example to notify the changes of sqlite3 database.
+
+Compile extension
+
+	# gcc -I../include -shared -o growldb.so growldb.c -L../lib -lgrowl 
+
+Make sqlite3 database
+
+    sqlite3 example.db < example.sql
+
+Use it.
+
+    sqlite3 example.db
+    SQLite version 3.7.5
+    Enter ".help" for instructions
+    Enter SQL statements terminated with a ";"
+    sqlite> select load_extension("growldb.so");
+
+And insert record.
+    
+    sqlite> insert into example values('foo');
+
+You can see the growl. Have fun!
