@@ -107,12 +107,14 @@ growl_tcp_open(const char* server) {
 
   if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
     perror("connect");
+    growl_tcp_close(sock);
     return -1;
   }
 
   on = 1;
   if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on)) == -1) {
     perror("setsockopt");
+    growl_tcp_close(sock);
     return -1;
   }
 
