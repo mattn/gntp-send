@@ -96,15 +96,17 @@ main(int argc, char* argv[]) {
   char* icon = NULL;
   char* url = NULL;
   int tcpsend = 1;
+  int utf8 = 0;
 
   opterr = 0;
-  while ((c = getopts(argc, argv, "a:n:s:p:u")) != -1) {
+  while ((c = getopts(argc, argv, "a:n:s:p:u8")) != -1) {
     switch (optopt) {
     case 'a': appname = optarg; break;
     case 'n': notify = optarg; break;
     case 's': server = optarg; break;
     case 'p': password = optarg; break;
     case 'u': tcpsend = 0; break;
+    case '8': utf8 = 1; break;
     case '?': break;
     default: argc = 0; break;
     }
@@ -116,10 +118,17 @@ main(int argc, char* argv[]) {
     exit(1);
   }
 
-  title = string_to_utf8_alloc(argv[optind]);
-  message = string_to_utf8_alloc(argv[optind + 1]);
-  if ((argc - optind) >= 3) icon = string_to_utf8_alloc(argv[optind + 2]);
-  if ((argc - optind) == 4) url = string_to_utf8_alloc(argv[optind + 3]);
+  if (!utf8) {
+    title = string_to_utf8_alloc(argv[optind]);
+    message = string_to_utf8_alloc(argv[optind + 1]);
+    if ((argc - optind) >= 3) icon = string_to_utf8_alloc(argv[optind + 2]);
+    if ((argc - optind) == 4) url = string_to_utf8_alloc(argv[optind + 3]);
+  } else {
+    title = strdup(argv[optind]);
+    message = strdup(argv[optind + 1]);
+    if ((argc - optind) >= 3) icon = strdup(argv[optind + 2]);
+    if ((argc - optind) == 4) url = strdup(argv[optind + 3]);
+  }
 
   if (!server) server = "127.0.0.1";
 

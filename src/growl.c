@@ -164,7 +164,7 @@ growl_tcp_register(
   growl_tcp_write(sock, "Notifications-Count: %d", notifications_count);
   growl_tcp_write(sock, "%s", "");
 
-  for(i = 0; i < notifications_count; i++) {
+  for (i = 0; i < notifications_count; i++) {
     growl_tcp_write(sock, "Notification-Name: %s", notifications[i]);
     growl_tcp_write(sock, "Notification-Display-Name: %s", notifications[i]);
     growl_tcp_write(sock, "Notification-Enabled: True");
@@ -406,7 +406,7 @@ int growl_udp_register(
   sprintf((char*)data + pointer, "%s", appname);
   pointer += strlen(appname);
 
-  for(i = 0; i < notifications_count; i++) {
+  for (i = 0; i < notifications_count; i++) {
     uint16_t notify_length = ntohs(strlen(notifications[i]));
     memcpy(data + pointer, &notify_length, 2);    
     pointer +=2;
@@ -414,7 +414,7 @@ int growl_udp_register(
     pointer += strlen(notifications[i]);
   } 
 
-  for(j = 0; j < notifications_count; j++) {
+  for (j = 0; j < notifications_count; j++) {
     memcpy(data + pointer, &j, 1);
     pointer++;
   }
@@ -500,7 +500,7 @@ int growl_udp(
     const char *const password,
     const char *url) {
 
-  int rc = growl_udp_register(server,  appname,  (const char **const)&notify, 1, password);
+  int rc = growl_udp_register(server, appname, (const char **const)&notify, 1, password);
   if (rc == 0) {
     rc = growl_udp_notify(server, appname, notify, title,  message, password);
   }
