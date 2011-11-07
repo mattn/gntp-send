@@ -3,7 +3,7 @@ USEDLL=yes
 ifeq (yes, $(USEDLL))
 CFLAGS = -Wall -D GROWL_DLL
 CPPFLAGS = -Wall -D GROWL_DLL -D GROWL_CPP_DLL
-LDFLAGS = -shared -lws2_32
+LDFLAGS = -lws2_32
 LIBTARGET = lib/libgrowl.dll
 LIBPPTARGET = lib/libgrowl++.dll
 else
@@ -18,26 +18,25 @@ all: dirs bin/gntp-send.exe bin/gntp-send++.exe
 
 
 
-bin/gntp-send.exe : obj/gntp-send.o $(LIBTARGET)
-	gcc $^ -o $@ $(LDFLAGS)
+bin/gntp-send.exe : obj/gntp-send.o lib/libgrowl.a
+	gcc -o $@ $^ $(LDFLAGS)
 
-bin/gntp-send++.exe : obj/gntp-send++.o $(LIBPPTARGET)
-	g++ $^ -o $@ $(LDFLAGS)
-
+bin/gntp-send++.exe : obj/gntp-send++.o lib/libgrowl++.a
+	gcc -o $@ $^ $(LDFLAGS) -lstdc++
 
 lib/libgrowl.a : obj/growl.o obj/tcp.o  obj/md5.o
 	ar rc $@ $^
 	ranlib $@	
 
-lib/libgrowl++.a : obj/growl++.o obj/tcp.o obj/md5.o
+lib/libgrowl++.a : obj/growl.o obj/growl++.o obj/tcp.o obj/md5.o
 	ar rc $@ $^
 	ranlib $@
 
 lib/libgrowl.dll: obj/growl.o obj/tcp.o  obj/md5.o
-	gcc -o lib/libgrowl.dll $^ -Wl,--out-implib,$@ $(LDFLAGS)
+	gcc -shared -o lib/libgrowl.dll $^ -Wl,--out-implib,$@ $(LDFLAGS)
 
 lib/libgrowl++.dll: obj/growl++.o obj/growl.o obj/tcp.o  obj/md5.o
-	g++ -o lib/libgrowl++.dll $^ -Wl,--out-implib,$@ $(LDFLAGS)
+	g++ -shared -o lib/libgrowl++.dll $^ -Wl,--out-implib,$@ $(LDFLAGS)
 
 
 
