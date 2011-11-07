@@ -96,38 +96,46 @@ main(int argc, char* argv[]) {
   char* icon = NULL;
   char* url = NULL;
   int tcpsend = 1;
-  int utf8 = 0;
+  int read_stdin = 0;
 
   opterr = 0;
-  while ((c = getopts(argc, argv, "a:n:s:p:u8")) != -1) {
+  while ((c = getopts(argc, argv, "a:n:s:p:ui")) != -1) {
     switch (optopt) {
     case 'a': appname = optarg; break;
     case 'n': notify = optarg; break;
     case 's': server = optarg; break;
     case 'p': password = optarg; break;
     case 'u': tcpsend = 0; break;
-    case '8': utf8 = 1; break;
+    case 'i': read_stdin = 1; break;
     case '?': break;
     default: argc = 0; break;
     }
     optarg = NULL;
   }
 
-  if ((argc - optind) < 2 || (argc - optind) > 4) {
+  if (!read_stdin && ((argc - optind) < 2 || (argc - optind) > 4)) {
     fprintf(stderr, "%s: [-u] [-a APPNAME] [-n NOTIFY] [-s SERVER:PORT] [-p PASSWORD] title message [icon] [url]\n", argv[0]);
     exit(1);
   }
 
-  if (!utf8) {
+  if (!read_stdin) {
     title = string_to_utf8_alloc(argv[optind]);
     message = string_to_utf8_alloc(argv[optind + 1]);
     if ((argc - optind) >= 3) icon = string_to_utf8_alloc(argv[optind + 2]);
     if ((argc - optind) == 4) url = string_to_utf8_alloc(argv[optind + 3]);
   } else {
-    title = strdup(argv[optind]);
-    message = strdup(argv[optind + 1]);
-    if ((argc - optind) >= 3) icon = strdup(argv[optind + 2]);
-    if ((argc - optind) == 4) url = strdup(argv[optind + 3]);
+    char buf[BUFSIZ], *ptr;
+    fgets(buf, sizeof(buf)-1, stdin);
+    if ((ptr = strpbrk(buf, "\r\n")) != NULL) *ptr = 0;
+    title = strdup(buf);
+    while (fgets(buf, sizeof(buf)-1, stdin)) {
+      if ((ptr = strpbrk(buf, "\r\n")) != NULL) *ptr = 0;
+      message = realloc(message, strlen(message ? message : "")+strlen(buf));
+      strcat(message, buf);
+      strcat(message, "\n");
+    }
+    if ((argc - optind) >= 1) icon = string_to_utf8_alloc(argv[optind]);
+    if ((argc - optind) == 2) url = string_to_utf8_alloc(argv[optind + 1]);
   }
 
   if (!server) server = "127.0.0.1";
