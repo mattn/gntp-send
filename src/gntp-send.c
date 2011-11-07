@@ -130,9 +130,14 @@ main(int argc, char* argv[]) {
     title = strdup(buf);
     while (fgets(buf, sizeof(buf)-1, stdin)) {
       if ((ptr = strpbrk(buf, "\r\n")) != NULL) *ptr = 0;
-      message = realloc(message, strlen(message ? message : "")+strlen(buf));
+      if (!message) {
+        message = malloc(strlen(buf) + 2);
+        *message = 0;
+      } else {
+        strcat(message, "\n");
+        message = realloc(message, strlen(message)+strlen(buf) + 2);
+      }
       strcat(message, buf);
-      strcat(message, "\n");
     }
     if ((argc - optind) >= 1) icon = string_to_utf8_alloc(argv[optind]);
     if ((argc - optind) == 2) url = string_to_utf8_alloc(argv[optind + 1]);
