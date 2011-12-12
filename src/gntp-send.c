@@ -114,7 +114,7 @@ main(int argc, char* argv[]) {
   }
 
   if (!read_stdin && ((argc - optind) < 2 || (argc - optind) > 4)) {
-    fprintf(stderr, "%s: [-u] [-a APPNAME] [-n NOTIFY] [-s SERVER:PORT] [-p PASSWORD] title message [icon] [url]\n", argv[0]);
+    fprintf(stderr, "%s: [-u] [-i] [-a APPNAME] [-n NOTIFY] [-s SERVER:PORT] [-p PASSWORD] title message [icon] [url]\n", argv[0]);
     exit(1);
   }
 
