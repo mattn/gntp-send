@@ -1,5 +1,6 @@
 #ifdef _WIN32
 #include <windows.h>
+#include <winsock2.h>
 #else
 #include <arpa/inet.h>
 #include <stdint.h>
@@ -38,7 +39,6 @@ int growl_init() {
       return -1;
     }
 #endif
-
     srand(time(NULL));
     growl_init_ = 1;
   }
@@ -131,92 +131,90 @@ growl_tcp_register(
   growl_init();
   authheader = growl_generate_authheader_alloc(password);
   sock = growl_tcp_open(server);
-  if (sock == -1) goto leave;
-
-  if (icon) {
-    size_t bytes_read;
-    md5_context md5ctx;
-    uint8_t md5tmp[20];
-    iconfile = fopen(icon, "rb");
-    if (iconfile) {
-      fseek(iconfile, 0, SEEK_END);
-      iconsize = ftell(iconfile);
-      fseek(iconfile, 0, SEEK_SET);
-      memset(md5tmp, 0, sizeof(md5tmp));
-      md5_starts(&md5ctx);
-      while (!feof(iconfile)) {
-        bytes_read = fread(buffer, 1, 1024, iconfile);
-        if (bytes_read) md5_update(&md5ctx, buffer, bytes_read);
+  if (sock > 0) {
+    if (icon && icon != "") {
+      size_t bytes_read;
+      md5_context md5ctx;
+      uint8_t md5tmp[20];
+      iconfile = fopen(icon, "rb");
+      if (iconfile) {
+        fseek(iconfile, 0, SEEK_END);
+        iconsize = ftell(iconfile);
+        fseek(iconfile, 0, SEEK_SET);
+        memset(md5tmp, 0, sizeof(md5tmp));
+        md5_starts(&md5ctx);
+        while (!feof(iconfile)) {
+          bytes_read = fread(buffer, 1, 1024, iconfile);
+          if (bytes_read) md5_update(&md5ctx, buffer, bytes_read);
+        }
+        fseek(iconfile, 0, SEEK_SET);
+        md5_finish(&md5ctx, md5tmp);
+        iconid = string_to_hex_alloc((const char*) md5tmp, 16);
       }
-      fseek(iconfile, 0, SEEK_SET);
-      md5_finish(&md5ctx, md5tmp);
-      iconid = string_to_hex_alloc((const char*) md5tmp, 16);
     }
-  }
-
-  growl_tcp_write(sock, "GNTP/1.0 REGISTER NONE %s", authheader ? authheader : "");
-  growl_tcp_write(sock, "Application-Name: %s", appname);
-  if (iconid) {
-    growl_tcp_write(sock, "Application-Icon: x-growl-resource://%s", iconid);  
-  } else if (icon) {
-    growl_tcp_write(sock, "Application-Icon: %s", icon);  
-  }
-  growl_tcp_write(sock, "Notifications-Count: %d", notifications_count);
-  growl_tcp_write(sock, "%s", "");
-
-  for (i = 0; i < notifications_count; i++) {
-    growl_tcp_write(sock, "Notification-Name: %s", notifications[i]);
-    growl_tcp_write(sock, "Notification-Display-Name: %s", notifications[i]);
-    growl_tcp_write(sock, "Notification-Enabled: True");
+  
+    growl_tcp_write(sock, "GNTP/1.0 REGISTER NONE %s", authheader );
+    growl_tcp_write(sock, "Application-Name: %s", appname);
     if (iconid) {
-      growl_tcp_write(sock, "Notification-Icon: x-growl-resource://%s", iconid);  
-    } else if (icon) {
-      growl_tcp_write(sock, "Notification-Icon: %s", icon);  
+      growl_tcp_write(sock, "Application-Icon: x-growl-resource://%s", iconid);  
+    } else if (icon && icon != "") {
+      growl_tcp_write(sock, "Application-Icon: %s", icon);  
+    }
+    growl_tcp_write(sock, "Notifications-Count: %d", notifications_count);
+    growl_tcp_write(sock, "%s", "");
+  
+    for (i = 0; i < notifications_count; i++) {
+      growl_tcp_write(sock, "Notification-Name: %s", notifications[i]);
+      growl_tcp_write(sock, "Notification-Display-Name: %s", notifications[i]);
+      growl_tcp_write(sock, "Notification-Enabled: True");
+      if (iconid) {
+        growl_tcp_write(sock, "Notification-Icon: x-growl-resource://%s", iconid);  
+      } else if (icon && icon != "") {
+        growl_tcp_write(sock, "Notification-Icon: %s", icon);  
+      }
+      growl_tcp_write(sock, "%s", "");
+    }
+  
+    if (iconid) {
+      growl_tcp_write(sock, "Identifier: %s", iconid);
+      growl_tcp_write(sock, "Length: %d", iconsize);
+      growl_tcp_write(sock, "%s", "");
+  
+      while (!feof(iconfile)) {
+        size_t bytes_read = fread(buffer, 1, 1024, iconfile);
+        if (bytes_read) growl_tcp_write_raw(sock, (const unsigned char *)buffer, bytes_read);
+      }
+      growl_tcp_write(sock, "%s", "");
     }
     growl_tcp_write(sock, "%s", "");
-  }
-
-  if (iconid) {
-    growl_tcp_write(sock, "Identifier: %s", iconid);
-    growl_tcp_write(sock, "Length: %d", iconsize);
-    growl_tcp_write(sock, "%s", "");
-
-    while (!feof(iconfile)) {
-      size_t bytes_read = fread(buffer, 1, 1024, iconfile);
-      if (bytes_read) growl_tcp_write_raw(sock, buffer, bytes_read);
-    }
-    growl_tcp_write(sock, "%s", "");
-  }
-  growl_tcp_write(sock, "%s", "");
-
-  while (1) {
-    char* line = growl_tcp_read(sock);
-    if (!line) {
-      growl_tcp_close(sock);
-      sock = -1;
-      goto leave;
-    } else {
-      int len = strlen(line);
-      /* fprintf(stderr, "%s\n", line); */
-      if (strncmp(line, "GNTP/1.0 -ERROR", 15) == 0) {
-        if (strncmp(line + 15, " NONE", 5) != 0) {
+  
+    while (1) {
+      char* line = growl_tcp_read(sock);
+      if (!line) {
+        growl_tcp_close(sock);
+        sock = -1;
+        break;
+      } else {
+        int len = strlen(line);
+        /* fprintf(stderr, "%s\n", line); */
+        if (strncmp(line, "GNTP/1.0 -ERROR", 15) == 0 && strncmp(line + 15, " NONE", 5) != 0) {
           fprintf(stderr, "failed to register notification\n");
           free(line);
-          goto leave;
+          break;
         }
+        free(line);
+        if (len == 0) break;
       }
-      free(line);
-      if (len == 0) break;
     }
+    growl_tcp_close(sock);
+    sock = 0;
+  
   }
-  growl_tcp_close(sock);
-  sock = 0;
-
-leave:
+  
   if (iconfile) fclose(iconfile);
   if (iconid) free(iconid);
   free(authheader);
-
+  
   return (sock == 0) ? 0 : -1;
 }
 
@@ -238,81 +236,83 @@ int growl_tcp_notify(
   FILE *iconfile = NULL;
   size_t iconsize;
   uint8_t buffer[1024];
-  
+
   growl_init();
 
   sock = growl_tcp_open(server);
-  if (sock == -1) goto leave;
-
-  if (icon) {
-    size_t bytes_read;
-    md5_context md5ctx;
-    uint8_t md5tmp[20];
-    iconfile = fopen(icon, "rb");
-    if (iconfile) {
-      fseek(iconfile, 0, SEEK_END);
-      iconsize = ftell(iconfile);
-      fseek(iconfile, 0, SEEK_SET);
-      memset(md5tmp, 0, sizeof(md5tmp));
-      md5_starts(&md5ctx);
-      while (!feof(iconfile)) {
-        bytes_read = fread(buffer, 1, 1024, iconfile);
-        if (bytes_read) md5_update(&md5ctx, buffer, bytes_read);
+  if (sock > 0) {
+    if (icon && icon != "") 
+    {
+      size_t bytes_read;
+      md5_context md5ctx;
+      uint8_t md5tmp[20];
+      iconfile = fopen(icon, "rb");
+      if (iconfile)
+      {
+        fseek(iconfile, 0, SEEK_END);
+        iconsize = ftell(iconfile);
+        fseek(iconfile, 0, SEEK_SET);
+        memset(md5tmp, 0, sizeof(md5tmp));
+        md5_starts(&md5ctx);
+        while (!feof(iconfile)) {
+          bytes_read = fread(buffer, 1, 1024, iconfile);
+          if (bytes_read) md5_update(&md5ctx, buffer, bytes_read);
+        }
+        fseek(iconfile, 0, SEEK_SET);
+        md5_finish(&md5ctx, md5tmp);
+        iconid = string_to_hex_alloc((const char*) md5tmp, 16);
       }
-      fseek(iconfile, 0, SEEK_SET);
-      md5_finish(&md5ctx, md5tmp);
-      iconid = string_to_hex_alloc((const char*) md5tmp, 16);
     }
-  }
-
-  growl_tcp_write(sock, "GNTP/1.0 NOTIFY NONE %s", authheader ? authheader : "");
-  growl_tcp_write(sock, "Application-Name: %s", appname);
-  growl_tcp_write(sock, "Notification-Name: %s", notify);
-  growl_tcp_write(sock, "Notification-Title: %s", title);
-  growl_tcp_write(sock, "Notification-Text: %s", message);
-  if (iconid) {
-    growl_tcp_write(sock, "Notification-Icon: x-growl-resource://%s", iconid);  
-  } else if (icon) {
-    growl_tcp_write(sock, "Notification-Icon: %s", icon);  
-  }
-  if (url) growl_tcp_write(sock, "Notification-Callback-Target: %s", url);
-
-  if (iconid) {
-    growl_tcp_write(sock, "Identifier: %s", iconid);
-    growl_tcp_write(sock, "Length: %d", iconsize);
-    growl_tcp_write(sock, "%s", "");
-    while (!feof(iconfile)) {
-      size_t bytes_read = fread(buffer, 1, 1024, iconfile);
-      if (bytes_read) growl_tcp_write_raw(sock, buffer, bytes_read);
+  
+    growl_tcp_write(sock, "GNTP/1.0 NOTIFY NONE %s", authheader ? authheader : "");
+    growl_tcp_write(sock, "Application-Name: %s", appname);
+    growl_tcp_write(sock, "Notification-Name: %s", notify);
+    growl_tcp_write(sock, "Notification-Title: %s", title);
+    growl_tcp_write(sock, "Notification-Text: %s", message);
+    if (iconid) {
+      growl_tcp_write(sock, "Notification-Icon: x-growl-resource://%s", iconid);  
+    } else if (icon && icon != "") {
+      growl_tcp_write(sock, "Notification-Icon: %s", icon);  
+    }
+    if (url) growl_tcp_write(sock, "Notification-Callback-Target: %s", url  );
+  
+    if (iconid) {
+      growl_tcp_write(sock, "Identifier: %s", iconid);
+      growl_tcp_write(sock, "Length: %d", iconsize);
+      growl_tcp_write(sock, "%s", "");
+      while (!feof(iconfile)) {
+        size_t bytes_read = fread(buffer, 1, 1024, iconfile);
+        if (bytes_read) growl_tcp_write_raw(sock, (const unsigned char *)buffer, bytes_read);
+      }
+      growl_tcp_write(sock, "%s", "");
     }
     growl_tcp_write(sock, "%s", "");
-  }
-  growl_tcp_write(sock, "%s", "");
-
-  while (1) {
-    char* line = growl_tcp_read(sock);
-    if (!line) {
-      growl_tcp_close(sock);
-      sock = -1;
-      goto leave;
-    } else {
-      int len = strlen(line);
-      /* fprintf(stderr, "%s\n", line); */
-      if (strncmp(line, "GNTP/1.0 -ERROR", 15) == 0) {
-        if (strncmp(line + 15, " NONE", 5) != 0) {
+  
+  
+    while (1) 
+    {
+      char* line = growl_tcp_read(sock);
+      if (!line) 
+      {
+        growl_tcp_close(sock);
+        sock = -1;
+        break;
+      } else {
+        int len = strlen(line);
+        /* fprintf(stderr, "%s\n", line); */
+        if (strncmp(line, "GNTP/1.0 -ERROR", 15) == 0 && strncmp(line + 15, " NONE", 5) != 0) {
           fprintf(stderr, "failed to post notification\n");
           free(line);
-          goto leave;
+          break;
         }
+        free(line);
+        if (len <= 0) break; // FIX: if there invalid character in the stream len = -1
       }
-      free(line);
-      if (len == 0) break;
     }
+    growl_tcp_close(sock);
+    sock = 0;
   }
-  growl_tcp_close(sock);
-  sock = 0;
 
-leave:
   if (iconfile) fclose(iconfile);
   if (iconid) free(iconid);
   free(authheader);
@@ -453,7 +453,7 @@ int growl_udp_notify(
   if (!data) return -1;
 
   growl_init();
-  
+
   pointer = 0;
   memcpy(data + pointer, &GROWL_PROTOCOL_VERSION, 1);  
   pointer++;
@@ -508,7 +508,6 @@ int growl_udp(
   (void)icon; (void)url; /* prevent unused warnigns */
 }
 
-
 #ifdef _WIN32
 
 static void
@@ -545,5 +544,3 @@ GrowlNotify(HWND hwnd, HINSTANCE hinst, LPSTR lpszCmdLine, int nCmdShow) {
   WSACleanup();
 }
 #endif
-
-/* vim:set et sw=2 ts=2 ai: */
