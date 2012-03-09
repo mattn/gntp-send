@@ -5,17 +5,36 @@
 
 #ifdef _WIN32
 #include <winsock2.h>
+void
+growl_perror(const char* s) {
+  char buf[200];
+  DWORD code;
+  DWORD ret;
+
+  code = GetLastError();
+  if (FormatMessage(
+      FORMAT_MESSAGE_FROM_SYSTEM,
+      NULL,
+      code,
+      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+      buf,
+      sizeof(buf),
+      NULL) != 0)
+    fprintf(stderr, "%s: %s\n", s, buf);
+}
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <netdb.h>
 #include <unistd.h>
+#define growl_perror(x) perror(x)
 #endif
 
 #include "tcp.h"
 
-static int growl_tcp_parse_hostname(
+static int
+growl_tcp_parse_hostname(
     const char *const server,
     int default_port,
     struct sockaddr_in *const sockaddr);
@@ -101,19 +120,19 @@ growl_tcp_open(const char* server) {
   }
 
   if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    perror("create socket");
+    growl_perror("create socket");
     return -1;
   }
 
   if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) == -1) {
-    perror("connect");
+    growl_perror("connect");
     growl_tcp_close(sock);
     return -1;
   }
 
   on = 1;
   if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on)) == -1) {
-    perror("setsockopt");
+    growl_perror("setsockopt");
     growl_tcp_close(sock);
     return -1;
   }
@@ -147,7 +166,7 @@ growl_tcp_parse_hostname(
 
   host_ent = gethostbyname(hostname);
   if (host_ent == NULL) {
-    perror("gethostbyname");
+    growl_perror("gethostbyname");
     free(hostname);
     return -1;
   }
