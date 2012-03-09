@@ -2,6 +2,7 @@
 #define _TCP_H_
 
 #ifdef _MSC_VER
+#pragma warning( disable : 4996 4244 )
 #define __attribute__(x)
 #endif
 void growl_tcp_write_raw( int sock, const unsigned char * data, const int data_length );

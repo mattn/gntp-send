@@ -35,6 +35,7 @@ GROWL_EXPORT int growl_udp_register( const char *const server , const char *cons
 
 
 GROWL_EXPORT int growl_init(void);
+
 GROWL_EXPORT void growl_shutdown(void);
 
 
