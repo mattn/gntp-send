@@ -1,13 +1,13 @@
-gntp-send
+# gntp-send
 =========
 
-* a command line binary for sending notifications to growl
-* a library for integrating growl into you c or c++ based applications
+* a command line binary for sending notifications to Growl
+* a library for integrating Growl into you C or C++ based applications
 
-Platforms
+## Platforms
 ---------
 
-Sending notifications from Windows / Linux / Mac is supported. Unixes in general should be supported but are untested.
+Sending notifications from Windows/Linux/ Mac is supported. Unixes in general should be supported but are untested.
 
 Notifications may be received by Growl on Mac or GrowlForWindows on Windows.
 
@@ -15,22 +15,24 @@ Notifications may be received by Growl on Mac or GrowlForWindows on Windows.
 * linux /mac
 
 
-C Functions
+## C Functions
 -----------
 
-    int growl(server, appname, notify, title, message, icon, password, url)
+```c
+int growl(server, appname, notify, title, message, icon, password, url)
+```
 
 Send tcp notification. Currently this is supported only by GrowlForWindows
 
-* server - hostname to send notification to , port can optionally be specified e.g hostname:80
-* appame - id for application sending notification
-* tite - title for notification
-* message -  notification text
-* icon - optional url for notification icon or NULL
-* password 
-* url - website to direct user to if they click notification or NULL
+* `server` - hostname where Growl is running, port can optionally be specified e.g `localhost:23053`
+* `appame` - name for application sending notification 
+* `tite` - notification title
+* `message` -  notification text
+* `icon` - optional url or local file path for notification icon or NULL
+* `password` - password for Growl
+* `url` - website to direct user to if they click notification or NULL
 
-```
+```c
 int growl_udp(server, appname, notify, title, message, icon, password, url)
 ```
 
@@ -38,34 +40,38 @@ Send udp notification. This is supported by both GrowlForWindows and Mac Growl.
 
 As above except icon and url are ignored.
 
-C++ Objects
+## C++ Objects
 -----------
 
-```
+```cpp
 Growl *grow = new Growl(protocol, password, appname, notifications, notifications_count);
 growl->Notify(notification1, title, message);
 growl->Notify(notification2, title, message);
 ```
 
-Building for MinGW
+## Building for MinGW
 ------------------
 
 MinGW is basically gcc for Windows. make is required to build using MinGW.
 
 To build the gntp-send.exe executable and libraries required for integration run
 
+```cmd
     mingw32-make -f Makefile.w32
+```
 
-Building for Visual Studio
+## Building for Visual Studio
 --------------------------
 
 nmake is required to build using Visual Studio.
 
 To build the gntp-send.exe executable and libraries required for integration run
 
+```cmd
     nmake -f Makefile.msc
+```
 
-Building for UNIX
+## Building for UNIX
 -----------------
 
 Max OS X is basically a Unix varient and is covered by these instructions.
@@ -74,21 +80,23 @@ gcc/g++ and make are required for building.
 
 To build gntp-send and the libraries required for integration run
 
+```cmd
     make -f Makefile
+```
 
-Precompiled Binaries
+## Precompiled Binaries
 --------------------
 
 Peter Sinnott is provided binaries for windows.
 
 see: https://github.com/psinnott/gntp-send
 
-License
+## License
 -------
 
 gntp-send and libraries are provided under BSD license.
 
-Contribute
+## Contributors
 ----------
 
 Please fork on github, and send me pull-requests.
