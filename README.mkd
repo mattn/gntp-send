@@ -101,3 +101,5 @@ Authors
 Yasuhiro Matsumoto `<mattn.jp@gmail.com>`
 
 Peter Sinnott `<link@redbrick.dcu.ie>`
+
+Dither `<ltrapper@gmail.com>`
