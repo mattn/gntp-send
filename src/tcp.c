@@ -8,14 +8,11 @@
 void
 growl_perror(const char* s) {
   char buf[200];
-  DWORD code;
-  DWORD ret;
 
-  code = GetLastError();
   if (FormatMessage(
       FORMAT_MESSAGE_FROM_SYSTEM,
       NULL,
-      code,
+      GetLastError(),
       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
       buf,
       sizeof(buf),
