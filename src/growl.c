@@ -182,7 +182,7 @@ growl_tcp_register(
   
       while (!feof(iconfile)) {
         size_t bytes_read = fread(buffer, 1, 1024, iconfile);
-        if (bytes_read) growl_tcp_write_raw(sock, buffer, bytes_read);
+        if (bytes_read) growl_tcp_write_raw(sock, (const unsigned char *)buffer, bytes_read);
       }
       growl_tcp_write(sock, "%s", "");
     }
@@ -282,7 +282,7 @@ int growl_tcp_notify(
       growl_tcp_write(sock, "%s", "");
       while (!feof(iconfile)) {
         size_t bytes_read = fread(buffer, 1, 1024, iconfile);
-        if (bytes_read) growl_tcp_write_raw(sock, buffer, bytes_read);
+        if (bytes_read) growl_tcp_write_raw(sock, (const unsigned char *)buffer, bytes_read);
       }
       growl_tcp_write(sock, "%s", "");
     }
