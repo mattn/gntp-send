@@ -26,7 +26,7 @@ growl_tcp_write_raw(
     const unsigned char * data,
     const int data_length) {
 
-  send(sock, data, data_length, 0);
+  send(sock, (const char*) data, data_length, 0);
 }
 
 void
