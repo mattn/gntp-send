@@ -87,7 +87,7 @@ To build gntp-send and the libraries required for integration run
 ## Precompiled Binaries
 --------------------
 
-Peter Sinnott is provided binaries for windows.
+Peter Sinnott provid binaries for windows.
 
 see: https://github.com/psinnott/gntp-send
 
