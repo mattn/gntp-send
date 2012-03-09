@@ -131,7 +131,7 @@ growl_tcp_register(
   growl_init();
   authheader = growl_generate_authheader_alloc(password);
   sock = growl_tcp_open(server);
-  if (sock > 0) {
+  if (sock != -1) {
     if (icon && icon != "") {
       size_t bytes_read;
       md5_context md5ctx;
@@ -240,7 +240,7 @@ int growl_tcp_notify(
   growl_init();
 
   sock = growl_tcp_open(server);
-  if (sock > 0) {
+  if (sock != -1) {
     if (icon && icon != "") 
     {
       size_t bytes_read;
