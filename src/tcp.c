@@ -100,12 +100,12 @@ growl_tcp_open(const char* server) {
     return -1;
   }
 
-  if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+  if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
     perror("create socket");
     return -1;
   }
 
-  if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+  if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) == -1) {
     perror("connect");
     growl_tcp_close(sock);
     return -1;
@@ -174,7 +174,7 @@ growl_tcp_datagram(
   }
 
   sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-  if (sock < 0) {
+  if (sock == -1) {
     return -1;
   }
 
