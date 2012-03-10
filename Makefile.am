@@ -33,7 +33,9 @@ gntp_send_LDADD = libgrowl.la
 # gntp-send++
 gntp_send___CFLAGS = $(AM_CFLAGS)
 gntp_send___CXXFLAGS = $(AM_CFLAGS) $(AM_CXXFLAGS)
-gntp_send___SOURCES = src/gntp-send.cpp
-gntp_send___LDADD = libgrowl++.la
+#gntp_send___SOURCES = src/gntp-send.cpp
+#gntp_send___LDADD = libgrowl++.la
+
+EXTRA_DIST = VERSION
 
 # vim: noexpandtab sw=4 ts=4
