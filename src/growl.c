@@ -125,7 +125,7 @@ growl_tcp_register(
   char *authheader;
   char *iconid = NULL;
   FILE *iconfile = NULL;
-  size_t iconsize;
+  size_t iconsize = 0;
   uint8_t buffer[1024];
 
   growl_init();
@@ -236,7 +236,7 @@ int growl_tcp_notify(
   char *authheader = growl_generate_authheader_alloc(password);
   char *iconid = NULL;
   FILE *iconfile = NULL;
-  size_t iconsize;
+  long iconsize = 0;
   uint8_t buffer[1024];
   
   growl_init();
@@ -279,7 +279,7 @@ int growl_tcp_notify(
 
   if (iconid) {
     growl_tcp_write(sock, "Identifier: %s", iconid);
-    growl_tcp_write(sock, "Length: %d", iconsize);
+    growl_tcp_write(sock, "Length: %ld", iconsize);
     growl_tcp_write(sock, "%s", "");
     while (!feof(iconfile)) {
       size_t bytes_read = fread(buffer, 1, 1024, iconfile);
