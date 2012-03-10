@@ -90,6 +90,9 @@ To build gntp-send and the libraries required for integration run
 Peter Sinnott provided windows binaries, see:  
 https://github.com/psinnott/gntp-send
 
+For ubuntu linux, use ppa:
+https://launchpad.net/~mattn/+archive/gntp-send
+
 ## License
 -------
 
