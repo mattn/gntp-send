@@ -125,7 +125,8 @@ main(int argc, char* argv[]) {
     if ((argc - optind) == 4) url = string_to_utf8_alloc(argv[optind + 3]);
   } else {
     char buf[BUFSIZ], *ptr;
-    fgets(buf, sizeof(buf)-1, stdin);
+    if (fgets(buf, sizeof(buf)-1, stdin) == NULL)
+      exit(1);
     if ((ptr = strpbrk(buf, "\r\n")) != NULL) *ptr = 0;
     title = strdup(buf);
     while (fgets(buf, sizeof(buf)-1, stdin)) {
