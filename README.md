@@ -87,14 +87,13 @@ To build gntp-send and the libraries required for integration run
 ## Precompiled Binaries
 --------------------
 
-Peter Sinnott provid binaries for windows.
-
-see: https://github.com/psinnott/gntp-send
+Peter Sinnott provided windows binaries, see:  
+https://github.com/psinnott/gntp-send
 
 ## License
 -------
 
-gntp-send and libraries are provided under BSD license.
+gntp-send and libraries distributed under BSD license.
 
 ## Contributors
 ----------
@@ -110,4 +109,4 @@ Yasuhiro Matsumoto `<mattn.jp@gmail.com>`
 
 Peter Sinnott `<link@redbrick.dcu.ie>`
 
-Dither `<ltrapper@gmail.com>`
+Dither `<dithersky@myopera.com>`
