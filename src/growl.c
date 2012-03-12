@@ -359,11 +359,18 @@ int growl_tcp_notify_with_data(
   growl_tcp_write(sock, "Notification-Text: %s", message);
   if (url) growl_tcp_write(sock, "Notification-Callback-Target: %s", url);
   if (iconid) {
+    long rest = icon_size;
+    unsigned char *ptr = (unsigned char *) icon_data;
     growl_tcp_write(sock, "Notification-Icon: x-growl-resource://%s", iconid);
     growl_tcp_write(sock, "Identifier: %s", iconid);
     growl_tcp_write(sock, "Length: %ld", icon_size);
     growl_tcp_write(sock, "%s", "");
-    growl_tcp_write_raw(sock, (const unsigned char *) icon_data, icon_size);
+    while (rest > 0) {
+      long send_size = rest > 1024 ? 1024 : rest;
+      growl_tcp_write_raw(sock, (const unsigned char *)ptr, send_size);
+      ptr += send_size;
+      rest -= send_size;
+    }
     growl_tcp_write(sock, "%s", "");
   }
   growl_tcp_write(sock, "%s", "");
