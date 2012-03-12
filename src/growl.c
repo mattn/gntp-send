@@ -336,8 +336,6 @@ int growl_tcp_notify_with_data(
 
   char *authheader = growl_generate_authheader_alloc(password);
   char *iconid = NULL;
-  FILE *iconfile = NULL;
-  uint8_t buffer[1024];
 
   growl_init();
 
@@ -394,7 +392,6 @@ int growl_tcp_notify_with_data(
   sock = 0;
 
 leave:
-  if (iconfile) fclose(iconfile);
   if (iconid) free(iconid);
   free(authheader);
 
