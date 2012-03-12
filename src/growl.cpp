@@ -99,4 +99,35 @@ Growl::Notify(
   }
 }
 
+void
+Growl::Notify(
+    const char *const notification,
+    const char *const title,
+    const char* const message,
+    const char *const url,
+    const unsigned char *const icon_data,
+    const long icon_size) {
+
+  if (protocol == GROWL_TCP) {
+    growl_tcp_notify_with_data(
+        server,
+        application,
+        notification,
+        title,
+        message,
+        password,
+        url,
+        icon_data,
+        icon_size);
+  } else if (protocol == GROWL_UDP) {
+    growl_udp_notify(
+        server,
+        application,
+        notification,
+        title,
+        message,
+        password);
+  }
+}
+
 /* vim:set et sw=2 ts=2 ai: */

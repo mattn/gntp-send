@@ -32,6 +32,7 @@ public:
   ~Growl();
   void Notify(const char *const notification, const char *const title, const char* const message);
   void Notify(const char *const notification, const char *const title, const char* const message, const char *const url, const char *const icon);
+  void Notify(const char *const notification, const char *const title, const char* const message, const char *const url, const unsigned char *const icon_data, const long icon_size);
 };
 
 #endif // GROWLXX_HPP_
