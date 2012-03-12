@@ -362,6 +362,7 @@ int growl_tcp_notify_with_data(
     long rest = icon_size;
     unsigned char *ptr = (unsigned char *) icon_data;
     growl_tcp_write(sock, "Notification-Icon: x-growl-resource://%s", icon_id);
+    growl_tcp_write(sock, "%s", "");
     growl_tcp_write(sock, "Identifier: %s", icon_id);
     growl_tcp_write(sock, "Length: %ld", icon_size);
     growl_tcp_write(sock, "%s", "");
