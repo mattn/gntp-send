@@ -125,7 +125,7 @@ growl_tcp_register(
   char *authheader;
   char *iconid = NULL;
   FILE *iconfile = NULL;
-  size_t iconsize = 0;
+  long icon_size = 0;
   uint8_t buffer[1024];
 
   growl_init();
@@ -140,7 +140,7 @@ growl_tcp_register(
     iconfile = fopen(icon, "rb");
     if (iconfile) {
       fseek(iconfile, 0, SEEK_END);
-      iconsize = ftell(iconfile);
+      icon_size = ftell(iconfile);
       fseek(iconfile, 0, SEEK_SET);
       memset(md5tmp, 0, sizeof(md5tmp));
       md5_starts(&md5ctx);
@@ -178,7 +178,7 @@ growl_tcp_register(
 
   if (iconid) {
     growl_tcp_write(sock, "Identifier: %s", iconid);
-    growl_tcp_write(sock, "Length: %d", iconsize);
+    growl_tcp_write(sock, "Length: %ld", icon_size);
     growl_tcp_write(sock, "%s", "");
 
     while (!feof(iconfile)) {
@@ -236,7 +236,7 @@ int growl_tcp_notify(
   char *authheader = growl_generate_authheader_alloc(password);
   char *iconid = NULL;
   FILE *iconfile = NULL;
-  long iconsize = 0;
+  long icon_size = 0;
   uint8_t buffer[1024];
   
   growl_init();
@@ -251,7 +251,7 @@ int growl_tcp_notify(
     iconfile = fopen(icon, "rb");
     if (iconfile) {
       fseek(iconfile, 0, SEEK_END);
-      iconsize = ftell(iconfile);
+      icon_size = ftell(iconfile);
       fseek(iconfile, 0, SEEK_SET);
       memset(md5tmp, 0, sizeof(md5tmp));
       md5_starts(&md5ctx);
@@ -279,12 +279,93 @@ int growl_tcp_notify(
 
   if (iconid) {
     growl_tcp_write(sock, "Identifier: %s", iconid);
-    growl_tcp_write(sock, "Length: %ld", iconsize);
+    growl_tcp_write(sock, "Length: %ld", icon_size);
     growl_tcp_write(sock, "%s", "");
     while (!feof(iconfile)) {
       size_t bytes_read = fread(buffer, 1, 1024, iconfile);
       if (bytes_read) growl_tcp_write_raw(sock, (const unsigned char *)buffer, bytes_read);
     }
+    growl_tcp_write(sock, "%s", "");
+  }
+  growl_tcp_write(sock, "%s", "");
+
+  while (1) {
+    char* line = growl_tcp_read(sock);
+    if (!line) {
+      growl_tcp_close(sock);
+      sock = -1;
+      goto leave;
+    } else {
+      int len = strlen(line);
+      /* fprintf(stderr, "%s\n", line); */
+      if (strncmp(line, "GNTP/1.0 -ERROR", 15) == 0) {
+        if (strncmp(line + 15, " NONE", 5) != 0) {
+          fprintf(stderr, "failed to post notification\n");
+          free(line);
+          goto leave;
+        }
+      }
+      free(line);
+      if (len == 0) break;
+    }
+  }
+  growl_tcp_close(sock);
+  sock = 0;
+
+leave:
+  if (iconfile) fclose(iconfile);
+  if (iconid) free(iconid);
+  free(authheader);
+
+  return (sock == 0) ? 0 : -1;
+}
+
+
+GROWL_EXPORT
+int growl_tcp_notify_with_data(
+    const char *const server,
+    const char *const appname,
+    const char *const notify,
+    const char *const title,
+    const char *const message,
+    const char *const password,
+    const char* const url,
+    const unsigned char* const icon_data,
+    const long icon_size) {
+  int sock = -1;
+
+  char *authheader = growl_generate_authheader_alloc(password);
+  char *iconid = NULL;
+  FILE *iconfile = NULL;
+  uint8_t buffer[1024];
+
+  growl_init();
+
+  sock = growl_tcp_open(server);
+  if (sock == -1) goto leave;
+
+  if (icon_data) {
+    md5_context md5ctx;
+    uint8_t md5tmp[20];
+    memset(md5tmp, 0, sizeof(md5tmp));
+    md5_starts(&md5ctx);
+    md5_update(&md5ctx, icon_data, icon_size);
+    md5_finish(&md5ctx, md5tmp);
+    iconid = string_to_hex_alloc((const char*) md5tmp, 16);
+  }
+
+  growl_tcp_write(sock, "GNTP/1.0 NOTIFY NONE %s", authheader ? authheader : "");
+  growl_tcp_write(sock, "Application-Name: %s", appname);
+  growl_tcp_write(sock, "Notification-Name: %s", notify);
+  growl_tcp_write(sock, "Notification-Title: %s", title);
+  growl_tcp_write(sock, "Notification-Text: %s", message);
+  if (url) growl_tcp_write(sock, "Notification-Callback-Target: %s", url);
+  if (iconid) {
+    growl_tcp_write(sock, "Notification-Icon: x-growl-resource://%s", iconid);
+    growl_tcp_write(sock, "Identifier: %s", iconid);
+    growl_tcp_write(sock, "Length: %ld", icon_size);
+    growl_tcp_write(sock, "%s", "");
+    growl_tcp_write_raw(sock, (const unsigned char *) icon_data, icon_size);
     growl_tcp_write(sock, "%s", "");
   }
   growl_tcp_write(sock, "%s", "");

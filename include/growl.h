@@ -24,6 +24,8 @@ GROWL_EXPORT int growl( const char *const server,const char *const appname,const
                                 const char *const icon , const char *const password , const char *url );
 GROWL_EXPORT int growl_tcp_notify( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
                                 const char *const password, const char* const url, const char* const icon );
+GROWL_EXPORT int growl_tcp_notify_with_data( const char *const server,const char *const appname,const char *const notify,const char *const title, const char *const message ,
+                                const char *const password, const char* const url, const unsigned char* const icon_data, const size_t icon_size );
 GROWL_EXPORT int growl_tcp_register( const char *const server , const char *const appname , const char **const notifications , const int notifications_count , const char *const password, const char *const icon );
 
 
