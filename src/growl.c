@@ -278,6 +278,7 @@ int growl_tcp_notify(
   if (url) growl_tcp_write(sock, "Notification-Callback-Target: %s", url);
 
   if (icon_id) {
+    growl_tcp_write(sock, "%s", "");
     growl_tcp_write(sock, "Identifier: %s", icon_id);
     growl_tcp_write(sock, "Length: %ld", icon_size);
     growl_tcp_write(sock, "%s", "");
