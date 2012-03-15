@@ -88,7 +88,7 @@ static char*
 growl_generate_authheader_alloc(const char*const password) {
   char* auth_header = NULL;
 
-  if (password) {
+  if (password && *password) {
     char *salt = gen_salt_alloc(8);
     if (salt) {
       char *keyhash = gen_password_hash_alloc(password, salt);
@@ -440,7 +440,7 @@ growl_append_md5(
 
   md5_starts(&md5ctx);
   md5_update(&md5ctx, (uint8_t*)data, data_length);
-  if (password != NULL) {
+  if (password && *password) {
     md5_update(&md5ctx, (uint8_t*)password, strlen(password));
   }
   md5_finish(&md5ctx, (uint8_t*)md5tmp);
