@@ -1,4 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
+AUTOMAKE_OPTIONS = subdir-objects
 
 AM_CFLAGS = -Wall -Wextra -Wno-missing-field-initializers -pedantic -I include
 AM_CXXFLAGS =
