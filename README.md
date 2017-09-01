@@ -74,7 +74,7 @@ To build the gntp-send.exe executable and libraries required for integration run
 ## Building for UNIX
 -----------------
 
-Max OS X is basically a Unix varient and is covered by these instructions.
+Max OS X is basically a Unix variant and is covered by these instructions.
 
 gcc/g++ and make are required for building.
 
